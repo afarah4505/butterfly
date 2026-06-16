@@ -322,7 +322,7 @@ export default function Home() {
   };
 
   return (
-    <main className="relative min-h-screen overflow-x-clip">
+    <main className="relative min-h-screen overflow-x-clip snap-none md:snap-y md:snap-mandatory">
       <ThreeBackdrop nightMix={nightMix} reduceEffects={shouldReduceEffects} />
       <div className="sun-rays" />
       <div className="mist-overlay" />
@@ -428,7 +428,7 @@ export default function Home() {
         <p className="mt-2 text-[11px] text-amber-100/84">{randomMessages[statusIndex]}</p>
       </motion.div>
 
-      <section id="home" className="relative z-10 min-h-screen overflow-hidden px-4 pb-12 pt-4 sm:px-8 sm:pb-16 sm:pt-6 lg:px-12">
+      <section id="home" className="relative z-10 min-h-screen overflow-hidden px-4 pb-12 pt-4 sm:px-8 sm:pb-16 sm:pt-6 lg:px-12 scroll-mt-20 md:scroll-mt-24 md:snap-start">
         <div className="absolute inset-0 bg-[#050b10]" />
 
         <div className="relative z-20 mx-auto flex min-h-[90svh] max-w-7xl flex-col">
@@ -500,7 +500,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section id="line-theater" className="story-panel scene-panel z-10 px-4">
+      <section id="line-theater" className="story-panel scene-panel z-10 px-4 scroll-mt-20 md:scroll-mt-24 md:snap-start">
         <div className="scene-shell mx-auto w-[min(1000px,96vw)] text-center">
           {dramaticLines.map((line, idx) => (
             <motion.p
@@ -517,7 +517,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section id="stage-test" className="story-panel scene-panel z-10 px-4">
+      <section id="stage-test" className="story-panel scene-panel z-10 px-4 scroll-mt-20 md:scroll-mt-24 md:snap-start">
         <div className="scene-shell mx-auto w-[min(1080px,96vw)]">
           <div className="scene-heading text-center">
             <p className="scene-kicker">First Flight</p>
@@ -593,7 +593,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section id="migration-widget" className="story-panel scene-panel z-10 px-4">
+      <section id="migration-widget" className="story-panel scene-panel z-10 px-4 scroll-mt-20 md:scroll-mt-24 md:snap-start">
         <div className="scene-shell mx-auto w-[min(980px,96vw)]">
           <div className="glass-card rounded-[2rem] p-6 sm:p-8">
             <p className="scene-kicker">🦋 Migration Season</p>
@@ -613,7 +613,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section id="cocoon" className="story-panel scene-panel scene-panel--cocoon z-10 px-4">
+      <section id="cocoon" className="story-panel scene-panel scene-panel--cocoon z-10 px-4 scroll-mt-20 md:scroll-mt-24 md:snap-start">
         <div className="scene-shell glass-card cocoon-card mx-auto w-[min(1080px,96vw)] overflow-hidden rounded-[2rem] p-6 sm:p-10">
           <div className="scene-heading max-w-2xl">
             <p className="scene-kicker">THE COCOON</p>
@@ -640,7 +640,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section id="swarm" className="story-panel scene-panel z-10 px-4 pb-28">
+      <section id="swarm" className="story-panel scene-panel z-10 px-4 pb-28 scroll-mt-20 md:scroll-mt-24 md:snap-start">
         <div className="scene-shell mx-auto w-[min(1100px,96vw)]">
           <div className="scene-heading text-center">
             <p className="scene-kicker">THE SWARM</p>
