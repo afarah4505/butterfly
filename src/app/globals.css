@@ -317,6 +317,11 @@ h4 {
     align-items: start;
   }
 
+  .story-panel > div {
+    position: relative;
+    z-index: 3;
+  }
+
   .sun-rays,
   .mist-overlay {
     opacity: 0.35;
@@ -335,6 +340,8 @@ h4 {
   }
 
   .glass-card {
+    border-color: rgba(255, 255, 255, 0.3);
+    background: linear-gradient(145deg, rgba(6, 19, 30, 0.9), rgba(11, 34, 34, 0.72));
     backdrop-filter: blur(8px);
   }
 }

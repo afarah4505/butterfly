@@ -58,17 +58,17 @@ export default function ShareMoment() {
   };
 
   return (
-    <section ref={ref} className="relative z-20 py-24 px-4 max-w-7xl mx-auto">
+    <section ref={ref} className="relative z-20 max-w-7xl mx-auto px-2 py-10 sm:px-4 sm:py-20">
       <motion.div
         initial={{ opacity: 0, y: -30 }}
         animate={isInView ? { opacity: 1, y: 0 } : {}}
         transition={{ duration: 0.8 }}
-        className="text-center mb-20"
+        className="mb-10 text-center sm:mb-16"
       >
-        <h2 className="text-4xl sm:text-6xl font-bold bg-gradient-to-r from-amber-300 via-orange-400 to-pink-500 bg-clip-text text-transparent mb-6">
+        <h2 className="mb-4 bg-gradient-to-r from-amber-300 via-orange-400 to-pink-500 bg-clip-text text-3xl font-bold text-transparent sm:mb-6 sm:text-6xl">
           Screenshot Moments
         </h2>
-        <p className="text-lg text-amber-100/80 max-w-2xl mx-auto">
+        <p className="mx-auto max-w-2xl text-base text-amber-100/90 sm:text-lg">
           These are the moments your community wants to share on X. These are the moments that go viral.
         </p>
       </motion.div>
@@ -77,7 +77,7 @@ export default function ShareMoment() {
         variants={container}
         initial="hidden"
         animate={isInView ? "visible" : "hidden"}
-        className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-16"
+        className="mb-10 grid grid-cols-1 gap-4 sm:mb-16 sm:gap-6 md:grid-cols-2"
       >
         {moments.map((moment) => (
           <motion.div
@@ -85,15 +85,15 @@ export default function ShareMoment() {
             variants={item}
             onMouseEnter={() => setHoveredMoment(moment.id)}
             onMouseLeave={() => setHoveredMoment(null)}
-            className="group relative rounded-2xl overflow-hidden border border-white/10 backdrop-blur-sm hover:border-white/30 transition-all duration-300 cursor-pointer"
+            className="group relative cursor-pointer overflow-hidden rounded-2xl border border-white/20 bg-black/35 backdrop-blur-sm transition-all duration-300 hover:border-white/30"
           >
             {/* Gradient background */}
             <div className={`absolute inset-0 bg-gradient-to-br ${moment.gradient} opacity-10 group-hover:opacity-20 transition-opacity duration-300`} />
 
             {/* Content */}
-            <div className="relative p-8 z-10 h-full flex flex-col">
-              <div className="flex items-start justify-between mb-4">
-                <span className="text-5xl">{moment.emoji}</span>
+            <div className="relative z-10 flex h-full flex-col p-5 sm:p-8">
+              <div className="mb-4 flex items-start justify-between">
+                <span className="text-4xl sm:text-5xl">{moment.emoji}</span>
                 <motion.div
                   animate={hoveredMoment === moment.id ? { scale: 1.1, rotate: 5 } : { scale: 1, rotate: 0 }}
                   className="px-3 py-1 rounded-full bg-white/10 backdrop-blur-sm"
@@ -102,15 +102,15 @@ export default function ShareMoment() {
                 </motion.div>
               </div>
 
-              <h3 className={`text-2xl font-bold bg-gradient-to-r ${moment.gradient} bg-clip-text text-transparent mb-2`}>
+              <h3 className={`mb-2 bg-gradient-to-r ${moment.gradient} bg-clip-text text-xl font-bold text-transparent sm:text-2xl`}>
                 {moment.title}
               </h3>
-              <p className="text-amber-100/80 leading-relaxed flex-grow">{moment.description}</p>
+              <p className="flex-grow leading-relaxed text-amber-100/92">{moment.description}</p>
 
               {/* CTA on hover */}
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
-                animate={hoveredMoment === moment.id ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
+                animate={hoveredMoment === moment.id ? { opacity: 1, y: 0 } : { opacity: 1, y: 0 }}
                 transition={{ duration: 0.2 }}
                 className="mt-6 pt-4 border-t border-white/10"
               >
@@ -134,10 +134,10 @@ export default function ShareMoment() {
         initial={{ opacity: 0, y: 40 }}
         animate={isInView ? { opacity: 1, y: 0 } : {}}
         transition={{ duration: 0.8, delay: 0.4 }}
-        className="rounded-2xl border-2 border-dashed border-amber-400/40 bg-gradient-to-b from-amber-400/5 to-transparent p-12 text-center"
+        className="rounded-2xl border-2 border-dashed border-amber-400/40 bg-gradient-to-b from-amber-400/8 to-transparent p-6 text-center sm:p-12"
       >
-        <h3 className="text-2xl font-bold text-white mb-4">Your Share, Your Way</h3>
-        <p className="text-amber-100/80 mb-8 max-w-2xl mx-auto">
+        <h3 className="mb-4 text-2xl font-bold text-white">Your Share, Your Way</h3>
+        <p className="mx-auto mb-8 max-w-2xl text-amber-100/90">
           The butterfly adapts to every moment. Hover over it. Watch it respond. Screenshot it. Share it. Let your community see the magic.
         </p>
         <motion.button

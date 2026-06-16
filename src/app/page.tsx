@@ -7,8 +7,6 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Lenis from "lenis";
 import ThreeBackdrop from "@/components/ThreeBackdrop";
-import ButterflyLore from "@/components/ButterflyLore";
-import ShareMoment from "@/components/ShareMoment";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -55,12 +53,12 @@ const traderTypes = [
 ];
 
 const migrationStages = [
-  "Forest Floor",
-  "Cocoon",
-  "First Flight",
-  "The Swarm",
+  "Paper Hands Detected",
+  "The Cocoon Was Bullish",
+  "Wen Wings?",
+  "Butterflies Fly",
   "Migration Season",
-  "Butterfly Effect",
+  "Main Character Mode",
 ];
 
 const swarmActions = [
@@ -71,6 +69,7 @@ const swarmActions = [
 ];
 
 const heroSymbols = ["🐛", "🥚", "⚡", "🦋"];
+const CONTRACT_ADDRESS = "0xBFLYBFLYBFLYBFLYBFLYBFLYBFLYBFLYBFLY";
 
 const initialFlowers: WallFlower[] = [
   {
@@ -248,20 +247,20 @@ export default function Home() {
     if (score >= 17) {
       result = {
         title: "Still a Caterpillar",
-        copy: "You are still chart-reactive. Breathe, cocoon, evolve.",
+        copy: "Paper hands detected.",
         chant: "🐛 → 🦋",
       };
     } else if (score >= 10) {
       result = {
         title: "Emerging Butterfly",
-        copy: "You survived chaos. Wings are loading.",
-        chant: "Almost airborne.",
+        copy: "The cocoon was bullish.",
+        chant: "Wen wings? Soon.",
       };
     } else {
       result = {
         title: "Full Butterfly",
-        copy: "You are now main-character energy. Lead the migration.",
-        chant: "Swarm approved.",
+        copy: "Migration season. You lead.",
+        chant: "Butterflies fly.",
       };
     }
 
@@ -280,6 +279,15 @@ export default function Home() {
     try {
       await navigator.clipboard.writeText(text);
       triggerEgg("Migration season approaching.");
+    } catch {
+      triggerEgg("Paper hands detected.");
+    }
+  };
+
+  const copyContractAddress = async () => {
+    try {
+      await navigator.clipboard.writeText(CONTRACT_ADDRESS);
+      triggerEgg("Contract copied. Migration season.");
     } catch {
       triggerEgg("Paper hands detected.");
     }
@@ -391,17 +399,36 @@ export default function Home() {
             <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9 }}>
               <p className="text-[10px] uppercase tracking-[0.24em] text-amber-200/85 sm:text-xs sm:tracking-[0.36em]">🐛 → 🦋 THE BUTTERFLY EFFECT</p>
               <h1 className="mt-4 text-4xl font-bold leading-[0.9] text-white sm:mt-6 sm:text-7xl lg:text-8xl">
-                FROM CATERPILLAR
+                BUY BFLY
                 <br />
-                TO MAIN CHARACTER.
+                JOIN THE SWARM.
               </h1>
-              <p className="mt-4 max-w-xl text-sm leading-7 text-amber-50/85 sm:mt-6 sm:text-lg sm:leading-8">
-                Most traders stay caterpillars. A few survive the cocoon. Welcome to the Butterfly Effect.
+              <p className="mt-4 max-w-xl text-sm leading-7 text-amber-50/85 sm:mt-6 sm:text-base sm:leading-8">
+                Dogs bark. Frogs croak. Butterflies fly.
+              </p>
+
+              <div className="mt-5 grid gap-3 sm:grid-cols-2">
+                <a href="https://jup.ag" target="_blank" rel="noreferrer" className="rounded-full bg-gradient-to-r from-amber-300 to-orange-400 px-5 py-3 text-center text-xs font-semibold uppercase tracking-[0.14em] text-black sm:text-sm">
+                  Buy BFLY
+                </a>
+                <button onClick={copyContractAddress} className="rounded-full border border-amber-200/50 bg-black/30 px-5 py-3 text-xs font-semibold uppercase tracking-[0.14em] text-amber-50 sm:text-sm">
+                  Contract Address
+                </button>
+                <a href="https://x.com" target="_blank" rel="noreferrer" className="rounded-full border border-white/20 bg-white/5 px-5 py-3 text-center text-xs font-semibold uppercase tracking-[0.14em] text-amber-50 sm:text-sm">
+                  Join X
+                </a>
+                <a href="https://t.me" target="_blank" rel="noreferrer" className="rounded-full border border-white/20 bg-white/5 px-5 py-3 text-center text-xs font-semibold uppercase tracking-[0.14em] text-amber-50 sm:text-sm">
+                  Telegram
+                </a>
+              </div>
+
+              <p className="mt-3 break-all rounded-xl border border-white/15 bg-black/25 px-3 py-2 text-[10px] tracking-[0.08em] text-amber-100/80 sm:text-xs">
+                CA: {CONTRACT_ADDRESS}
               </p>
 
               <div className="mt-6 flex flex-wrap gap-3 sm:mt-8 sm:gap-4">
-                <a href="#community" className="rounded-full bg-gradient-to-r from-amber-300 to-orange-400 px-5 py-2.5 text-xs font-semibold text-black shadow-[0_0_40px_rgba(255,184,96,0.2)] sm:px-7 sm:py-3 sm:text-sm">Join The Swarm</a>
-                <a href="#test" className="rounded-full border border-amber-200/50 bg-white/5 px-5 py-2.5 text-xs font-semibold text-amber-50 backdrop-blur-md sm:px-7 sm:py-3 sm:text-sm">Begin Metamorphosis</a>
+                <a href="#community" className="rounded-full bg-gradient-to-r from-amber-300 to-orange-400 px-5 py-2.5 text-xs font-semibold text-black shadow-[0_0_40px_rgba(255,184,96,0.2)] sm:px-7 sm:py-3 sm:text-sm">Plant Your Flower</a>
+                <a href="#test" className="rounded-full border border-amber-200/50 bg-white/5 px-5 py-2.5 text-xs font-semibold text-amber-50 backdrop-blur-md sm:px-7 sm:py-3 sm:text-sm">Wen Wings?</a>
               </div>
 
               <div className="mt-7 flex items-center gap-2 rounded-2xl border border-white/10 bg-black/25 px-3 py-3 text-xl sm:mt-10 sm:gap-3 sm:px-4 sm:py-4 sm:text-3xl">
@@ -452,8 +479,8 @@ export default function Home() {
 
       <section id="traders" className="story-panel z-10 px-4">
         <div className="w-[min(1080px,96vw)]">
-          <h2 className="text-center text-3xl sm:text-6xl">THE THREE TYPES OF TRADERS</h2>
-          <p className="mt-4 text-center text-sm uppercase tracking-[0.2em] text-amber-100/75">Dogs barked. Cats meowed. Frogs croaked. We transformed.</p>
+          <h2 className="text-center text-3xl sm:text-6xl">PICK YOUR FORM</h2>
+          <p className="mt-4 text-center text-sm uppercase tracking-[0.2em] text-amber-100/75">Paper hands detected. Choose better.</p>
           <div className="mt-8 grid gap-4 md:grid-cols-3">
             {traderTypes.map((card) => (
               <article key={card.title} className="glass-card rounded-3xl p-6">
@@ -473,13 +500,14 @@ export default function Home() {
       <section id="cocoon" className="story-panel z-10 px-4">
         <div className="glass-card cocoon-card w-[min(980px,95vw)] overflow-hidden rounded-[2rem] p-8 sm:p-12">
           <p className="text-xs uppercase tracking-[0.32em] text-amber-200/80">THE COCOON</p>
-          <h2 className="mt-3 text-3xl sm:text-6xl">Everyone thought we disappeared.</h2>
-          <h3 className="mt-3 text-2xl text-amber-100 sm:text-5xl">We were transforming.</h3>
+          <h2 className="mt-3 text-3xl sm:text-6xl">The cocoon was bullish.</h2>
+          <h3 className="mt-3 text-2xl text-amber-100 sm:text-5xl">Migration season is live.</h3>
 
           <div className="mt-8 grid gap-8 lg:grid-cols-[1fr,0.9fr]">
-            <p className="max-w-xl text-base leading-8 text-amber-50/82">
-              Quiet charts are not dead charts. They are pressure chambers. The cocoon cracked and a culture came out of it.
-              This is not launch-day hype. This is a migration event.
+            <p className="max-w-xl text-base leading-8 text-amber-50/88">
+              Sideways chart. Loud community. Wings loading.
+              <br />
+              Wen wings? Right now.
             </p>
             <div className="relative min-h-56 rounded-3xl border border-white/15 bg-black/25 p-4">
               <div className="cocoon-shell" />
@@ -494,7 +522,7 @@ export default function Home() {
       <section id="swarm" className="story-panel z-10 px-4">
         <div className="glass-card w-[min(1020px,96vw)] rounded-[2rem] p-6 sm:p-10">
           <h2 className="text-3xl sm:text-6xl">THE SWARM</h2>
-          <p className="mt-3 text-sm uppercase tracking-[0.2em] text-amber-100/70">Not tokenomics. Movement metrics.</p>
+          <p className="mt-3 text-sm uppercase tracking-[0.2em] text-amber-100/70">Move fast. Post hard. Hold wings.</p>
 
           <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <div className="rounded-2xl border border-white/10 bg-black/25 p-4">
@@ -531,13 +559,13 @@ export default function Home() {
 
       <section id="test" className="story-panel z-10 px-4">
         <div className="glass-card w-[min(1000px,95vw)] rounded-[2rem] p-6 sm:p-10">
-          <h2 className="text-3xl sm:text-6xl">ARE YOU READY TO FLY?</h2>
-          <p className="mt-3 text-sm uppercase tracking-[0.2em] text-amber-100/70">Take the metamorphosis test. Screenshot your result.</p>
+          <h2 className="text-3xl sm:text-6xl">WEN WINGS TEST</h2>
+          <p className="mt-3 text-sm uppercase tracking-[0.2em] text-amber-100/70">3 taps. Know your form.</p>
 
           <form onSubmit={evaluateQuiz} className="mt-7 grid gap-4 sm:grid-cols-3">
             <label className="rounded-2xl border border-white/10 bg-black/20 p-4 text-sm">
               <span>How many rugs survived?</span>
-              <select value={rugsSurvived} onChange={(event) => setRugsSurvived(event.target.value)} className="mt-3 w-full rounded-xl border border-white/20 bg-black/30 px-3 py-2">
+              <select value={rugsSurvived} onChange={(event) => setRugsSurvived(event.target.value)} className="mt-3 w-full rounded-xl border border-white/20 bg-black/40 px-3 py-2 text-amber-50">
                 <option value="0">0</option>
                 <option value="1">1</option>
                 <option value="2">2</option>
@@ -546,7 +574,7 @@ export default function Home() {
             </label>
             <label className="rounded-2xl border border-white/10 bg-black/20 p-4 text-sm">
               <span>How many times bought the top?</span>
-              <select value={topsBought} onChange={(event) => setTopsBought(event.target.value)} className="mt-3 w-full rounded-xl border border-white/20 bg-black/30 px-3 py-2">
+              <select value={topsBought} onChange={(event) => setTopsBought(event.target.value)} className="mt-3 w-full rounded-xl border border-white/20 bg-black/40 px-3 py-2 text-amber-50">
                 <option value="0">0</option>
                 <option value="1">1</option>
                 <option value="2">2</option>
@@ -555,7 +583,7 @@ export default function Home() {
             </label>
             <label className="rounded-2xl border border-white/10 bg-black/20 p-4 text-sm">
               <span>How many times panic sold?</span>
-              <select value={panicSells} onChange={(event) => setPanicSells(event.target.value)} className="mt-3 w-full rounded-xl border border-white/20 bg-black/30 px-3 py-2">
+              <select value={panicSells} onChange={(event) => setPanicSells(event.target.value)} className="mt-3 w-full rounded-xl border border-white/20 bg-black/40 px-3 py-2 text-amber-50">
                 <option value="0">0</option>
                 <option value="1">1</option>
                 <option value="2">2</option>
@@ -564,13 +592,13 @@ export default function Home() {
             </label>
 
             <button type="submit" className="sm:col-span-3 rounded-2xl bg-gradient-to-r from-amber-300 to-orange-400 px-6 py-3 text-sm font-semibold text-black">
-              Reveal My Form
+              Reveal Form
             </button>
           </form>
 
           <div className="mt-6 rounded-2xl border border-white/15 bg-black/30 p-6" data-screenshot-card="true">
             {!quizResult ? (
-              <p className="text-amber-50/75">No result yet. Fill the test and reveal your form.</p>
+              <p className="text-amber-50/75">Tap answers. Reveal your meme form.</p>
             ) : (
               <>
                 <p className="text-xs uppercase tracking-[0.24em] text-amber-100/75">Result</p>
@@ -581,7 +609,7 @@ export default function Home() {
                   <button onClick={copyResultForX} className="rounded-full border border-amber-200/40 bg-amber-200/10 px-4 py-2 text-[10px] uppercase tracking-[0.14em] text-amber-100 sm:px-5 sm:text-xs sm:tracking-[0.2em]">
                     Copy Result For X
                   </button>
-                  <p className="self-center text-[10px] uppercase tracking-[0.14em] text-amber-100/70 sm:text-xs sm:tracking-[0.2em]">Screenshot this card and post: 🐛 → 🦋</p>
+                  <p className="self-center text-[10px] uppercase tracking-[0.14em] text-amber-100/70 sm:text-xs sm:tracking-[0.2em]">Post it. Dogs bark. Butterflies fly.</p>
                 </div>
               </>
             )}
@@ -591,8 +619,8 @@ export default function Home() {
 
       <section id="migration" className="story-panel z-10 px-4">
         <div className="w-[min(1000px,95vw)]">
-          <h2 className="text-center text-3xl sm:text-6xl">THE MIGRATION</h2>
-          <p className="mt-3 text-center text-sm uppercase tracking-[0.2em] text-amber-100/70">Roadmaps are dead. Seasons are alive.</p>
+          <h2 className="text-center text-3xl sm:text-6xl">MIGRATION SEASON</h2>
+          <p className="mt-3 text-center text-sm uppercase tracking-[0.2em] text-amber-100/70">No roadmap essays. Just movement.</p>
 
           <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {migrationStages.map((stage, idx) => (
@@ -609,7 +637,7 @@ export default function Home() {
       <section id="community" className="story-panel z-10 px-4 pb-24">
         <div className="glass-card w-[min(1040px,96vw)] rounded-[2rem] p-6 sm:p-10">
           <h2 className="text-3xl sm:text-6xl">COMMUNITY WALL</h2>
-          <p className="mt-3 max-w-2xl text-sm uppercase tracking-[0.2em] text-amber-100/70">Every message plants a flower. The garden grows with the swarm.</p>
+          <p className="mt-3 max-w-2xl text-sm uppercase tracking-[0.2em] text-amber-100/70">Plant Your Flower. Join the movement.</p>
 
           <form onSubmit={plantMessage} className="mt-6 grid gap-3 sm:grid-cols-[1fr,1fr,auto]">
             <input
@@ -625,7 +653,7 @@ export default function Home() {
               className="rounded-2xl border border-white/25 bg-black/20 px-4 py-3 text-sm text-[#fff7e8] placeholder:text-[#f7ddb4]/65 focus:border-amber-200 focus:outline-none"
             />
             <button className="rounded-2xl bg-gradient-to-r from-amber-300 to-orange-300 px-5 py-3 text-sm font-semibold text-[#1f2326]">
-              Plant Flower
+              Plant Your Flower
             </button>
           </form>
 
@@ -653,14 +681,17 @@ export default function Home() {
               </p>
             ))}
           </div>
-
-      <section id="about">
-        <ButterflyLore />
-      </section>
-
-      <ShareMoment />
         </div>
       </section>
+
+      <div className="fixed inset-x-0 bottom-0 z-[60] border-t border-white/15 bg-black/70 px-2 py-2 backdrop-blur-md md:hidden">
+        <div className="grid grid-cols-4 gap-2">
+          <a href="https://jup.ag" target="_blank" rel="noreferrer" className="rounded-xl bg-amber-300 px-2 py-2 text-center text-[10px] font-bold uppercase tracking-[0.1em] text-black">Buy</a>
+          <button onClick={copyContractAddress} className="rounded-xl border border-white/25 bg-white/5 px-2 py-2 text-[10px] font-semibold uppercase tracking-[0.1em] text-amber-100">CA</button>
+          <a href="https://x.com" target="_blank" rel="noreferrer" className="rounded-xl border border-white/25 bg-white/5 px-2 py-2 text-center text-[10px] font-semibold uppercase tracking-[0.1em] text-amber-100">X</a>
+          <a href="https://t.me" target="_blank" rel="noreferrer" className="rounded-xl border border-white/25 bg-white/5 px-2 py-2 text-center text-[10px] font-semibold uppercase tracking-[0.1em] text-amber-100">TG</a>
+        </div>
+      </div>
     </main>
   );
 }

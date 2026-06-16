@@ -49,15 +49,15 @@ export default function ButterflyLore() {
   };
 
   return (
-    <section ref={ref} className="relative z-20 py-24 px-4 max-w-6xl mx-auto">
+    <section ref={ref} className="relative z-20 px-2 py-10 sm:px-4 sm:py-20 max-w-6xl mx-auto">
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={isInView ? { opacity: 1, y: 0 } : {}}
         transition={{ duration: 0.8 }}
-        className="text-center mb-20"
+        className="mb-10 text-center sm:mb-16"
       >
-        <h2 className="text-4xl sm:text-6xl font-bold text-white mb-6">The Butterfly Lore</h2>
-        <p className="text-lg text-amber-100/80 max-w-2xl mx-auto">
+        <h2 className="mb-4 text-3xl font-bold text-white sm:mb-6 sm:text-6xl">The Butterfly Lore</h2>
+        <p className="mx-auto max-w-2xl text-base text-amber-100/90 sm:text-lg">
           Every metamorphosis tells a story. Here&apos;s yours.
         </p>
       </motion.div>
@@ -66,24 +66,24 @@ export default function ButterflyLore() {
         variants={container}
         initial="hidden"
         animate={isInView ? "visible" : "hidden"}
-        className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16"
+        className="mb-10 grid grid-cols-1 gap-4 sm:mb-16 sm:gap-8 md:grid-cols-2"
       >
         {loreItems.map((lore, idx) => (
           <motion.div
             key={idx}
             variants={item}
-            className="group relative rounded-2xl overflow-hidden border border-white/10 backdrop-blur-sm hover:border-amber-400/50 transition-all duration-300"
+            className="group relative overflow-hidden rounded-2xl border border-white/20 bg-black/35 backdrop-blur-sm transition-all duration-300 hover:border-amber-400/50"
           >
             {/* Gradient background */}
             <div className={`absolute inset-0 bg-gradient-to-br ${lore.color} opacity-5 group-hover:opacity-10 transition-opacity duration-300`} />
 
             {/* Content */}
-            <div className="relative p-8 z-10">
-              <div className="flex items-center gap-4 mb-4">
-                <span className="text-4xl">{lore.icon}</span>
-                <h3 className={`text-2xl font-bold bg-gradient-to-r ${lore.color} bg-clip-text text-transparent`}>{lore.phase}</h3>
+            <div className="relative z-10 p-5 sm:p-8">
+              <div className="mb-3 flex items-center gap-3 sm:mb-4 sm:gap-4">
+                <span className="text-3xl sm:text-4xl">{lore.icon}</span>
+                <h3 className={`text-xl font-bold sm:text-2xl bg-gradient-to-r ${lore.color} bg-clip-text text-transparent`}>{lore.phase}</h3>
               </div>
-              <p className="text-amber-100/90 leading-relaxed text-lg">{lore.text}</p>
+              <p className="text-base leading-relaxed text-amber-100/95 sm:text-lg">{lore.text}</p>
             </div>
 
             {/* Hover glow */}
@@ -102,9 +102,9 @@ export default function ButterflyLore() {
         initial={{ opacity: 0, scale: 0.9 }}
         animate={isInView ? { opacity: 1, scale: 1 } : {}}
         transition={{ duration: 0.8, delay: 0.6 }}
-        className="text-center py-12 px-8 rounded-2xl border border-amber-400/30 bg-gradient-to-b from-amber-400/10 to-transparent backdrop-blur-sm"
+        className="rounded-2xl border border-amber-300/35 bg-gradient-to-b from-amber-400/14 to-transparent px-5 py-8 text-center backdrop-blur-sm sm:px-8 sm:py-12"
       >
-        <p className="text-2xl sm:text-3xl font-light text-white leading-relaxed">
+        <p className="text-xl font-light leading-relaxed text-white sm:text-3xl">
           &quot;You&apos;re not buying a meme coin. You&apos;re becoming a butterfly. <br />
           <span className="text-amber-300 font-semibold">And butterflies don&apos;t ask permission to take flight.&quot;</span>
         </p>
