@@ -512,7 +512,7 @@ export default function Home() {
       </section>
 
       <section id="traders" className="story-panel z-10 px-4">
-        <div className="w-[min(1080px,96vw)]">
+        <div className="mx-auto w-[min(1080px,96vw)]">
           <h2 className="text-center text-3xl sm:text-6xl text-white/95">PICK YOUR FORM</h2>
           <p className="mt-4 text-center text-xs sm:text-sm uppercase tracking-[0.2em] text-amber-100/90 sm:text-amber-100/75">Paper hands detected. Choose better.</p>
           <div className="mt-8 grid gap-4 md:grid-cols-3">
@@ -532,18 +532,18 @@ export default function Home() {
       </section>
 
       <section className="story-panel z-10 px-4">
-        <div className="w-[min(1080px,96vw)]">
+        <div className="mx-auto w-[min(1080px,96vw)]">
           <h2 className="text-center text-3xl sm:text-6xl text-white/95">BEFORE BFLY vs AFTER BFLY</h2>
           <p className="mt-4 text-center text-xs sm:text-sm uppercase tracking-[0.2em] text-amber-100/90 sm:text-amber-100/75">What transformation looks like in the wild.</p>
           <div className="mt-8 grid gap-6 md:grid-cols-2">
             {beforeAfterBFLY.map((item, idx) => (
-              <div key={idx} className="glass-card rounded-2xl p-6 border-white/25 sm:border-white/15 bg-black/60 sm:bg-black/30">
-                <div className="flex gap-4">
+              <div key={idx} className="glass-card rounded-2xl border-white/25 bg-black/60 p-6 sm:border-white/15 sm:bg-black/30">
+                <div className="flex flex-col items-center gap-3 text-center sm:flex-row sm:items-start sm:gap-4 sm:text-left">
                   <div className="flex-1">
                     <p className="text-[10px] sm:text-xs uppercase tracking-[0.16em] text-red-300/85">Before</p>
                     <p className="mt-2 text-base sm:text-lg text-amber-50/90">{item.before}</p>
                   </div>
-                  <div className="text-xl">→</div>
+                  <div className="text-xl text-amber-200/95">→</div>
                   <div className="flex-1">
                     <p className="text-[10px] sm:text-xs uppercase tracking-[0.16em] text-green-300/85">After</p>
                     <p className="mt-2 text-base sm:text-lg text-amber-50/90">{item.after}</p>
@@ -556,7 +556,7 @@ export default function Home() {
       </section>
 
       <section id="cocoon" className="story-panel z-10 px-4">
-        <div className="glass-card cocoon-card w-[min(980px,95vw)] overflow-hidden rounded-[2rem] p-6 sm:p-12 border-white/25 sm:border-white/15 bg-black/60 sm:bg-black/30">
+        <div className="glass-card cocoon-card mx-auto w-[min(980px,95vw)] overflow-hidden rounded-[2rem] border-white/25 bg-black/60 p-6 sm:border-white/15 sm:bg-black/30 sm:p-12">
           <p className="text-xs uppercase tracking-[0.32em] text-amber-200/90 sm:text-amber-200/80">THE COCOON</p>
           <h2 className="mt-3 text-3xl sm:text-6xl text-white/95">The cocoon was bullish.</h2>
           <h3 className="mt-3 text-2xl sm:text-5xl text-amber-100/90">Migration season is live.</h3>
@@ -567,7 +567,7 @@ export default function Home() {
               <br />
               Wen wings? Right now.
             </p>
-            <div className="relative min-h-56 rounded-3xl border border-white/15 bg-black/25 p-4">
+            <div className="relative min-h-56 rounded-3xl border border-white/25 bg-black/55 p-4 sm:border-white/15 sm:bg-black/25">
               <div className="cocoon-shell" />
               <motion.span className="crack-line crack-1" animate={shouldReduceEffects ? { scaleY: 0.7 } : { scaleY: [0.2, 1, 0.45] }} transition={shouldReduceEffects ? { duration: 0.2 } : { duration: 2.2, repeat: Infinity }} />
               <motion.span className="crack-line crack-2" animate={shouldReduceEffects ? { scaleY: 0.75 } : { scaleY: [0.3, 1, 0.5] }} transition={shouldReduceEffects ? { duration: 0.2 } : { duration: 2.1, repeat: Infinity, delay: 0.25 }} />
@@ -578,7 +578,7 @@ export default function Home() {
       </section>
 
       <section id="swarm" className="story-panel z-10 px-4">
-        <div className="glass-card w-[min(1020px,96vw)] rounded-[2rem] p-6 sm:p-10 border-white/25 sm:border-white/15 bg-black/60 sm:bg-black/30">
+        <div className="glass-card mx-auto w-[min(1020px,96vw)] rounded-[2rem] border-white/25 bg-black/60 p-6 sm:border-white/15 sm:bg-black/30 sm:p-10">
           <h2 className="text-3xl sm:text-6xl text-white/95">THE SWARM</h2>
           <p className="mt-3 text-xs sm:text-sm uppercase tracking-[0.2em] text-amber-100/90 sm:text-amber-100/70">Move fast. Post hard. Hold wings.</p>
 
@@ -616,40 +616,40 @@ export default function Home() {
       </section>
 
       <section id="test" className="story-panel z-10 px-4">
-        <div className="glass-card w-[min(1000px,95vw)] rounded-[2rem] p-6 sm:p-10 border-white/25 sm:border-white/15 bg-black/60 sm:bg-black/30">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div className="glass-card mx-auto w-[min(1000px,95vw)] rounded-[2rem] border-white/25 bg-black/60 p-6 sm:border-white/15 sm:bg-black/30 sm:p-10">
+          <div className="flex flex-col gap-4 text-center sm:flex-row sm:items-center sm:justify-between sm:text-left">
             <div>
               <h2 className="text-3xl sm:text-6xl text-white/95">WEN WINGS TEST</h2>
               <p className="mt-3 text-xs sm:text-sm uppercase tracking-[0.2em] text-amber-100/90 sm:text-amber-100/70">3 taps. Know your form.</p>
             </div>
-            <div className="flex items-center gap-3 rounded-2xl border border-white/25 sm:border-white/15 bg-black/50 sm:bg-black/40 px-4 py-3 text-sm sm:text-base">
+            <div className="mx-auto flex w-full max-w-[240px] items-center justify-center gap-3 rounded-2xl border border-white/30 bg-black/70 px-4 py-3 text-sm sm:mx-0 sm:max-w-none sm:w-auto sm:justify-start sm:border-white/15 sm:bg-black/40 sm:text-base">
               <span className="text-lg sm:text-2xl">{migrationEmojis[migrationStatusIndex]}</span>
               <span className="text-amber-100/90">{migrationLabels[migrationStatusIndex]}</span>
             </div>
           </div>
 
           <form onSubmit={evaluateQuiz} className="mt-7 grid gap-4 sm:grid-cols-3">
-            <label className="rounded-2xl border border-white/25 sm:border-white/10 bg-black/50 sm:bg-black/20 p-4 text-xs sm:text-sm text-amber-50/90">
+            <label className="rounded-2xl border border-white/30 bg-black/65 p-4 text-xs text-amber-50/95 sm:border-white/10 sm:bg-black/20 sm:text-sm sm:text-amber-50/90">
               <span>How many rugs survived?</span>
-              <select value={rugsSurvived} onChange={(event) => setRugsSurvived(event.target.value)} className="mt-3 w-full rounded-xl border border-white/25 sm:border-white/20 bg-black/50 sm:bg-black/40 px-3 py-2 text-amber-50/95">
+              <select value={rugsSurvived} onChange={(event) => setRugsSurvived(event.target.value)} className="mt-3 w-full rounded-xl border border-white/30 bg-black/75 px-3 py-2 text-amber-50/95 sm:border-white/20 sm:bg-black/40">
                 <option value="0">0</option>
                 <option value="1">1</option>
                 <option value="2">2</option>
                 <option value="3">3+</option>
               </select>
             </label>
-            <label className="rounded-2xl border border-white/25 sm:border-white/10 bg-black/50 sm:bg-black/20 p-4 text-xs sm:text-sm text-amber-50/90">
+            <label className="rounded-2xl border border-white/30 bg-black/65 p-4 text-xs text-amber-50/95 sm:border-white/10 sm:bg-black/20 sm:text-sm sm:text-amber-50/90">
               <span>How many times bought the top?</span>
-              <select value={topsBought} onChange={(event) => setTopsBought(event.target.value)} className="mt-3 w-full rounded-xl border border-white/25 sm:border-white/20 bg-black/50 sm:bg-black/40 px-3 py-2 text-amber-50/95">
+              <select value={topsBought} onChange={(event) => setTopsBought(event.target.value)} className="mt-3 w-full rounded-xl border border-white/30 bg-black/75 px-3 py-2 text-amber-50/95 sm:border-white/20 sm:bg-black/40">
                 <option value="0">0</option>
                 <option value="1">1</option>
                 <option value="2">2</option>
                 <option value="3">3+</option>
               </select>
             </label>
-            <label className="rounded-2xl border border-white/25 sm:border-white/10 bg-black/50 sm:bg-black/20 p-4 text-xs sm:text-sm text-amber-50/90">
+            <label className="rounded-2xl border border-white/30 bg-black/65 p-4 text-xs text-amber-50/95 sm:border-white/10 sm:bg-black/20 sm:text-sm sm:text-amber-50/90">
               <span>How many times panic sold?</span>
-              <select value={panicSells} onChange={(event) => setPanicSells(event.target.value)} className="mt-3 w-full rounded-xl border border-white/25 sm:border-white/20 bg-black/50 sm:bg-black/40 px-3 py-2 text-amber-50/95">
+              <select value={panicSells} onChange={(event) => setPanicSells(event.target.value)} className="mt-3 w-full rounded-xl border border-white/30 bg-black/75 px-3 py-2 text-amber-50/95 sm:border-white/20 sm:bg-black/40">
                 <option value="0">0</option>
                 <option value="1">1</option>
                 <option value="2">2</option>
@@ -662,7 +662,7 @@ export default function Home() {
             </button>
           </form>
 
-          <div className="mt-6 rounded-2xl border border-white/25 sm:border-white/15 bg-black/50 sm:bg-black/30 p-6">
+          <div className="mt-6 rounded-2xl border border-white/30 bg-black/65 p-6 sm:border-white/15 sm:bg-black/30">
             {!quizResult ? (
               <p className="text-amber-50/90 text-sm">Tap answers. Reveal your meme form.</p>
             ) : (
@@ -684,7 +684,7 @@ export default function Home() {
       </section>
 
       <section id="migration" className="story-panel z-10 px-4">
-        <div className="w-[min(1000px,95vw)]">
+        <div className="mx-auto w-[min(1000px,95vw)]">
           <h2 className="text-center text-3xl sm:text-6xl text-white/95">MIGRATION SEASON</h2>
           <p className="mt-3 text-center text-xs sm:text-sm uppercase tracking-[0.2em] text-amber-100/90 sm:text-amber-100/70">No roadmap essays. Just movement.</p>
 
@@ -701,7 +701,7 @@ export default function Home() {
       </section>
 
       <section id="community" className="story-panel z-10 px-4 pb-24">
-        <div className="glass-card w-[min(1040px,96vw)] rounded-[2rem] p-6 sm:p-10 border-white/25 sm:border-white/15 bg-black/60 sm:bg-black/30">
+        <div className="glass-card mx-auto w-[min(1040px,96vw)] rounded-[2rem] border-white/25 bg-black/60 p-6 sm:border-white/15 sm:bg-black/30 sm:p-10">
           <h2 className="text-3xl sm:text-6xl text-white/95">COMMUNITY WALL</h2>
           <p className="mt-3 max-w-2xl text-xs sm:text-sm uppercase tracking-[0.2em] text-amber-100/90 sm:text-amber-100/70">Plant Your Flower. Join the movement.</p>
 
@@ -710,13 +710,13 @@ export default function Home() {
               value={name}
               onChange={(event) => setName(event.target.value)}
               placeholder="X handle or name"
-              className="rounded-2xl border border-white/30 sm:border-white/25 bg-black/50 sm:bg-black/20 px-4 py-3 text-xs sm:text-sm text-amber-50/95 placeholder:text-amber-100/65 sm:placeholder:text-amber-100/50 focus:border-amber-200 focus:outline-none"
+              className="rounded-2xl border border-white/35 bg-black/70 px-4 py-3 text-xs text-amber-50/95 placeholder:text-amber-100/70 focus:border-amber-200 focus:outline-none sm:border-white/25 sm:bg-black/20 sm:text-sm sm:placeholder:text-amber-100/50"
             />
             <input
               value={message}
               onChange={(event) => setMessage(event.target.value)}
               placeholder="Drop your swarm message"
-              className="rounded-2xl border border-white/30 sm:border-white/25 bg-black/50 sm:bg-black/20 px-4 py-3 text-xs sm:text-sm text-amber-50/95 placeholder:text-amber-100/65 sm:placeholder:text-amber-100/50 focus:border-amber-200 focus:outline-none"
+              className="rounded-2xl border border-white/35 bg-black/70 px-4 py-3 text-xs text-amber-50/95 placeholder:text-amber-100/70 focus:border-amber-200 focus:outline-none sm:border-white/25 sm:bg-black/20 sm:text-sm sm:placeholder:text-amber-100/50"
             />
             <button className="rounded-2xl bg-gradient-to-r from-amber-300 to-orange-300 px-4 sm:px-5 py-3 text-xs sm:text-sm font-semibold text-black/95 whitespace-nowrap">
               Plant

@@ -317,6 +317,16 @@ h4 {
     align-items: start;
   }
 
+  .story-panel::before {
+    content: "";
+    position: absolute;
+    inset: 0.5rem;
+    z-index: 1;
+    border-radius: 1.75rem;
+    background: linear-gradient(180deg, rgba(4, 12, 19, 0.78), rgba(4, 12, 19, 0.92));
+    pointer-events: none;
+  }
+
   .story-panel > div {
     position: relative;
     z-index: 3;
@@ -324,7 +334,7 @@ h4 {
 
   .sun-rays,
   .mist-overlay {
-    opacity: 0.35;
+    opacity: 0.16;
   }
 
   .forest-layer.layer-1 {
@@ -340,8 +350,19 @@ h4 {
   }
 
   .glass-card {
-    border-color: rgba(255, 255, 255, 0.3);
-    background: linear-gradient(145deg, rgba(6, 19, 30, 0.9), rgba(11, 34, 34, 0.72));
-    backdrop-filter: blur(8px);
+    border-color: rgba(255, 255, 255, 0.34);
+    background: linear-gradient(145deg, rgba(5, 16, 25, 0.94), rgba(8, 24, 27, 0.88));
+    backdrop-filter: blur(16px);
+    box-shadow: 0 26px 70px rgba(0, 0, 0, 0.48);
+  }
+
+  .glass-card p,
+  .glass-card li,
+  .glass-card label,
+  .glass-card input,
+  .glass-card select,
+  .glass-card button,
+  .glass-card span {
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.24);
   }
 }
