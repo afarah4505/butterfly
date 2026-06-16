@@ -32,6 +32,10 @@ const easterEggs = [
   "Wen wings?",
   "Metamorphosis successful.",
   "Migration season approaching.",
+  "Wings loading...",
+  "Butterfly spotted.",
+  "The Butterfly has entered the chat.",
+  "You don't buy BFLY. You become it.",
 ];
 
 const traderTypes = [
@@ -59,6 +63,25 @@ const migrationStages = [
   "Butterflies Fly",
   "Migration Season",
   "Main Character Mode",
+];
+
+const beforeAfterBFLY = [
+  {
+    before: "Panic sells at 2x",
+    after: "Holds through 100x",
+  },
+  {
+    before: "Checks chart every 30 seconds",
+    after: "Checks chart every season",
+  },
+  {
+    before: "Paper hands shaking",
+    after: "Diamond hands flying",
+  },
+  {
+    before: "Rugs ruined the portfolio",
+    after: "BFLY is the portfolio",
+  },
 ];
 
 const swarmActions = [
@@ -119,6 +142,10 @@ export default function Home() {
   const [topsBought, setTopsBought] = useState("2");
   const [panicSells, setPanicSells] = useState("2");
   const [quizResult, setQuizResult] = useState<QuizResult | null>(null);
+
+  const [migrationStatusIndex, setMigrationStatusIndex] = useState(0);
+  const migrationEmojis = ["🐛", "🥚", "🦋"];
+  const migrationLabels = ["Caterpillar", "Cocoon", "Butterfly"];
 
   const shouldReduceEffects = isPhone || prefersReducedMotion;
 
@@ -217,6 +244,7 @@ export default function Home() {
   useEffect(() => {
     const timer = window.setInterval(() => {
       triggerEgg();
+      setMigrationStatusIndex((prev) => (prev + 1) % 3);
     }, 9200);
 
     return () => window.clearInterval(timer);
@@ -407,6 +435,10 @@ export default function Home() {
                 Dogs bark. Frogs croak. Butterflies fly.
               </p>
 
+              <p className="mt-6 italic text-amber-200/85 sm:mt-8 sm:text-lg">
+                &ldquo;You don&apos;t buy BFLY. You become it.&rdquo;
+              </p>
+
               <div className="mt-5 grid gap-3 sm:grid-cols-2">
                 <a href="https://jup.ag" target="_blank" rel="noreferrer" className="rounded-full bg-gradient-to-r from-amber-300 to-orange-400 px-5 py-3 text-center text-xs font-semibold uppercase tracking-[0.14em] text-black sm:text-sm">
                   Buy BFLY
@@ -422,9 +454,11 @@ export default function Home() {
                 </a>
               </div>
 
-              <p className="mt-3 break-all rounded-xl border border-white/15 bg-black/25 px-3 py-2 text-[10px] tracking-[0.08em] text-amber-100/80 sm:text-xs">
-                CA: {CONTRACT_ADDRESS}
-              </p>
+              <div className="mt-3 flex items-center gap-2 rounded-xl border sm:border-white/15 sm:bg-black/25 border-white/25 bg-black/60 px-3 py-2 text-[10px] sm:text-xs tracking-[0.08em]">
+                <span className="shrink-0 text-amber-100/85">CA:</span>
+                <code className="break-all font-mono text-amber-100/95">{CONTRACT_ADDRESS}</code>
+                <button onClick={copyContractAddress} className="ml-auto shrink-0 rounded bg-amber-300/20 px-2 py-1 text-[9px] uppercase text-amber-200 hover:bg-amber-300/40 sm:text-[10px]">Copy</button>
+              </div>
 
               <div className="mt-6 flex flex-wrap gap-3 sm:mt-8 sm:gap-4">
                 <a href="#community" className="rounded-full bg-gradient-to-r from-amber-300 to-orange-400 px-5 py-2.5 text-xs font-semibold text-black shadow-[0_0_40px_rgba(255,184,96,0.2)] sm:px-7 sm:py-3 sm:text-sm">Plant Your Flower</a>
@@ -479,16 +513,16 @@ export default function Home() {
 
       <section id="traders" className="story-panel z-10 px-4">
         <div className="w-[min(1080px,96vw)]">
-          <h2 className="text-center text-3xl sm:text-6xl">PICK YOUR FORM</h2>
-          <p className="mt-4 text-center text-sm uppercase tracking-[0.2em] text-amber-100/75">Paper hands detected. Choose better.</p>
+          <h2 className="text-center text-3xl sm:text-6xl text-white/95">PICK YOUR FORM</h2>
+          <p className="mt-4 text-center text-xs sm:text-sm uppercase tracking-[0.2em] text-amber-100/90 sm:text-amber-100/75">Paper hands detected. Choose better.</p>
           <div className="mt-8 grid gap-4 md:grid-cols-3">
             {traderTypes.map((card) => (
-              <article key={card.title} className="glass-card rounded-3xl p-6">
+              <article key={card.title} className="glass-card rounded-3xl p-6 sm:p-6 border-white/25 sm:border-white/15 bg-black/60 sm:bg-black/30">
                 <p className="text-3xl">{card.icon}</p>
-                <h3 className="mt-3 text-3xl">{card.title}</h3>
-                <ul className="mt-4 space-y-2 text-sm text-amber-50/85">
+                <h3 className="mt-3 text-2xl sm:text-3xl text-white/95">{card.title}</h3>
+                <ul className="mt-4 space-y-2 text-sm text-amber-100/90 sm:text-amber-50/85">
                   {card.points.map((point) => (
-                    <li key={point}>• {point}</li>
+                    <li key={point} className="text-amber-50/90 sm:text-amber-50/85">• {point}</li>
                   ))}
                 </ul>
               </article>
@@ -497,14 +531,38 @@ export default function Home() {
         </div>
       </section>
 
+      <section className="story-panel z-10 px-4">
+        <div className="w-[min(1080px,96vw)]">
+          <h2 className="text-center text-3xl sm:text-6xl text-white/95">BEFORE BFLY vs AFTER BFLY</h2>
+          <p className="mt-4 text-center text-xs sm:text-sm uppercase tracking-[0.2em] text-amber-100/90 sm:text-amber-100/75">What transformation looks like in the wild.</p>
+          <div className="mt-8 grid gap-6 md:grid-cols-2">
+            {beforeAfterBFLY.map((item, idx) => (
+              <div key={idx} className="glass-card rounded-2xl p-6 border-white/25 sm:border-white/15 bg-black/60 sm:bg-black/30">
+                <div className="flex gap-4">
+                  <div className="flex-1">
+                    <p className="text-[10px] sm:text-xs uppercase tracking-[0.16em] text-red-300/85">Before</p>
+                    <p className="mt-2 text-base sm:text-lg text-amber-50/90">{item.before}</p>
+                  </div>
+                  <div className="text-xl">→</div>
+                  <div className="flex-1">
+                    <p className="text-[10px] sm:text-xs uppercase tracking-[0.16em] text-green-300/85">After</p>
+                    <p className="mt-2 text-base sm:text-lg text-amber-50/90">{item.after}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       <section id="cocoon" className="story-panel z-10 px-4">
-        <div className="glass-card cocoon-card w-[min(980px,95vw)] overflow-hidden rounded-[2rem] p-8 sm:p-12">
-          <p className="text-xs uppercase tracking-[0.32em] text-amber-200/80">THE COCOON</p>
-          <h2 className="mt-3 text-3xl sm:text-6xl">The cocoon was bullish.</h2>
-          <h3 className="mt-3 text-2xl text-amber-100 sm:text-5xl">Migration season is live.</h3>
+        <div className="glass-card cocoon-card w-[min(980px,95vw)] overflow-hidden rounded-[2rem] p-6 sm:p-12 border-white/25 sm:border-white/15 bg-black/60 sm:bg-black/30">
+          <p className="text-xs uppercase tracking-[0.32em] text-amber-200/90 sm:text-amber-200/80">THE COCOON</p>
+          <h2 className="mt-3 text-3xl sm:text-6xl text-white/95">The cocoon was bullish.</h2>
+          <h3 className="mt-3 text-2xl sm:text-5xl text-amber-100/90">Migration season is live.</h3>
 
           <div className="mt-8 grid gap-8 lg:grid-cols-[1fr,0.9fr]">
-            <p className="max-w-xl text-base leading-8 text-amber-50/88">
+            <p className="max-w-xl text-sm sm:text-base leading-7 sm:leading-8 text-amber-50/90 sm:text-amber-50/88">
               Sideways chart. Loud community. Wings loading.
               <br />
               Wen wings? Right now.
@@ -520,26 +578,26 @@ export default function Home() {
       </section>
 
       <section id="swarm" className="story-panel z-10 px-4">
-        <div className="glass-card w-[min(1020px,96vw)] rounded-[2rem] p-6 sm:p-10">
-          <h2 className="text-3xl sm:text-6xl">THE SWARM</h2>
-          <p className="mt-3 text-sm uppercase tracking-[0.2em] text-amber-100/70">Move fast. Post hard. Hold wings.</p>
+        <div className="glass-card w-[min(1020px,96vw)] rounded-[2rem] p-6 sm:p-10 border-white/25 sm:border-white/15 bg-black/60 sm:bg-black/30">
+          <h2 className="text-3xl sm:text-6xl text-white/95">THE SWARM</h2>
+          <p className="mt-3 text-xs sm:text-sm uppercase tracking-[0.2em] text-amber-100/90 sm:text-amber-100/70">Move fast. Post hard. Hold wings.</p>
 
           <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <div className="rounded-2xl border border-white/10 bg-black/25 p-4">
-              <p className="text-xs uppercase tracking-[0.22em] text-amber-100/75">🦋 Butterflies Migrated</p>
-              <p className="mt-2 text-3xl font-semibold">{butterfliesMigrated.toLocaleString()}</p>
+            <div className="rounded-2xl border border-white/25 sm:border-white/10 bg-black/50 sm:bg-black/25 p-4">
+              <p className="text-[10px] sm:text-xs uppercase tracking-[0.22em] text-amber-100/90 sm:text-amber-100/75">🦋 Butterflies Migrated</p>
+              <p className="mt-2 text-2xl sm:text-3xl font-semibold text-white/95">{butterfliesMigrated.toLocaleString()}</p>
             </div>
-            <div className="rounded-2xl border border-white/10 bg-black/25 p-4">
-              <p className="text-xs uppercase tracking-[0.22em] text-amber-100/75">🌸 Flowers Planted</p>
-              <p className="mt-2 text-3xl font-semibold">{flowersPlanted.toLocaleString()}</p>
+            <div className="rounded-2xl border border-white/25 sm:border-white/10 bg-black/50 sm:bg-black/25 p-4">
+              <p className="text-[10px] sm:text-xs uppercase tracking-[0.22em] text-amber-100/90 sm:text-amber-100/75">🌸 Flowers Planted</p>
+              <p className="mt-2 text-2xl sm:text-3xl font-semibold text-white/95">{flowersPlanted.toLocaleString()}</p>
             </div>
-            <div className="rounded-2xl border border-white/10 bg-black/25 p-4">
-              <p className="text-xs uppercase tracking-[0.22em] text-amber-100/75">🌎 Territories Reached</p>
-              <p className="mt-2 text-3xl font-semibold">{territoriesReached.toLocaleString()}</p>
+            <div className="rounded-2xl border border-white/25 sm:border-white/10 bg-black/50 sm:bg-black/25 p-4">
+              <p className="text-[10px] sm:text-xs uppercase tracking-[0.22em] text-amber-100/90 sm:text-amber-100/75">🌎 Territories Reached</p>
+              <p className="mt-2 text-2xl sm:text-3xl font-semibold text-white/95">{territoriesReached.toLocaleString()}</p>
             </div>
-            <div className="rounded-2xl border border-white/10 bg-black/25 p-4">
-              <p className="text-xs uppercase tracking-[0.22em] text-amber-100/75">⚡ Metamorphosis Events</p>
-              <p className="mt-2 text-3xl font-semibold">{metamorphosisEvents.toLocaleString()}</p>
+            <div className="rounded-2xl border border-white/25 sm:border-white/10 bg-black/50 sm:bg-black/25 p-4">
+              <p className="text-[10px] sm:text-xs uppercase tracking-[0.22em] text-amber-100/90 sm:text-amber-100/75">⚡ Metamorphosis Events</p>
+              <p className="mt-2 text-2xl sm:text-3xl font-semibold text-white/95">{metamorphosisEvents.toLocaleString()}</p>
             </div>
           </div>
 
@@ -548,7 +606,7 @@ export default function Home() {
               <button
                 key={action.label}
                 onClick={() => runSwarmAction(action)}
-                className="rounded-2xl border border-amber-200/30 bg-amber-200/10 px-4 py-4 text-left text-xs uppercase tracking-[0.15em] text-amber-50 transition hover:-translate-y-1 hover:bg-amber-200/20 sm:text-sm sm:tracking-[0.2em]"
+                className="rounded-2xl border border-amber-200/40 sm:border-amber-200/30 bg-amber-200/15 sm:bg-amber-200/10 px-4 py-4 text-left text-xs uppercase tracking-[0.15em] text-amber-50/95 sm:text-amber-50 transition hover:-translate-y-1 hover:bg-amber-200/25 sm:hover:bg-amber-200/20"
               >
                 {action.label}
               </button>
@@ -558,32 +616,40 @@ export default function Home() {
       </section>
 
       <section id="test" className="story-panel z-10 px-4">
-        <div className="glass-card w-[min(1000px,95vw)] rounded-[2rem] p-6 sm:p-10">
-          <h2 className="text-3xl sm:text-6xl">WEN WINGS TEST</h2>
-          <p className="mt-3 text-sm uppercase tracking-[0.2em] text-amber-100/70">3 taps. Know your form.</p>
+        <div className="glass-card w-[min(1000px,95vw)] rounded-[2rem] p-6 sm:p-10 border-white/25 sm:border-white/15 bg-black/60 sm:bg-black/30">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+              <h2 className="text-3xl sm:text-6xl text-white/95">WEN WINGS TEST</h2>
+              <p className="mt-3 text-xs sm:text-sm uppercase tracking-[0.2em] text-amber-100/90 sm:text-amber-100/70">3 taps. Know your form.</p>
+            </div>
+            <div className="flex items-center gap-3 rounded-2xl border border-white/25 sm:border-white/15 bg-black/50 sm:bg-black/40 px-4 py-3 text-sm sm:text-base">
+              <span className="text-lg sm:text-2xl">{migrationEmojis[migrationStatusIndex]}</span>
+              <span className="text-amber-100/90">{migrationLabels[migrationStatusIndex]}</span>
+            </div>
+          </div>
 
           <form onSubmit={evaluateQuiz} className="mt-7 grid gap-4 sm:grid-cols-3">
-            <label className="rounded-2xl border border-white/10 bg-black/20 p-4 text-sm">
+            <label className="rounded-2xl border border-white/25 sm:border-white/10 bg-black/50 sm:bg-black/20 p-4 text-xs sm:text-sm text-amber-50/90">
               <span>How many rugs survived?</span>
-              <select value={rugsSurvived} onChange={(event) => setRugsSurvived(event.target.value)} className="mt-3 w-full rounded-xl border border-white/20 bg-black/40 px-3 py-2 text-amber-50">
+              <select value={rugsSurvived} onChange={(event) => setRugsSurvived(event.target.value)} className="mt-3 w-full rounded-xl border border-white/25 sm:border-white/20 bg-black/50 sm:bg-black/40 px-3 py-2 text-amber-50/95">
                 <option value="0">0</option>
                 <option value="1">1</option>
                 <option value="2">2</option>
                 <option value="3">3+</option>
               </select>
             </label>
-            <label className="rounded-2xl border border-white/10 bg-black/20 p-4 text-sm">
+            <label className="rounded-2xl border border-white/25 sm:border-white/10 bg-black/50 sm:bg-black/20 p-4 text-xs sm:text-sm text-amber-50/90">
               <span>How many times bought the top?</span>
-              <select value={topsBought} onChange={(event) => setTopsBought(event.target.value)} className="mt-3 w-full rounded-xl border border-white/20 bg-black/40 px-3 py-2 text-amber-50">
+              <select value={topsBought} onChange={(event) => setTopsBought(event.target.value)} className="mt-3 w-full rounded-xl border border-white/25 sm:border-white/20 bg-black/50 sm:bg-black/40 px-3 py-2 text-amber-50/95">
                 <option value="0">0</option>
                 <option value="1">1</option>
                 <option value="2">2</option>
                 <option value="3">3+</option>
               </select>
             </label>
-            <label className="rounded-2xl border border-white/10 bg-black/20 p-4 text-sm">
+            <label className="rounded-2xl border border-white/25 sm:border-white/10 bg-black/50 sm:bg-black/20 p-4 text-xs sm:text-sm text-amber-50/90">
               <span>How many times panic sold?</span>
-              <select value={panicSells} onChange={(event) => setPanicSells(event.target.value)} className="mt-3 w-full rounded-xl border border-white/20 bg-black/40 px-3 py-2 text-amber-50">
+              <select value={panicSells} onChange={(event) => setPanicSells(event.target.value)} className="mt-3 w-full rounded-xl border border-white/25 sm:border-white/20 bg-black/50 sm:bg-black/40 px-3 py-2 text-amber-50/95">
                 <option value="0">0</option>
                 <option value="1">1</option>
                 <option value="2">2</option>
@@ -591,25 +657,25 @@ export default function Home() {
               </select>
             </label>
 
-            <button type="submit" className="sm:col-span-3 rounded-2xl bg-gradient-to-r from-amber-300 to-orange-400 px-6 py-3 text-sm font-semibold text-black">
+            <button type="submit" className="sm:col-span-3 rounded-2xl bg-gradient-to-r from-amber-300 to-orange-400 px-6 py-3 text-xs sm:text-sm font-semibold text-black">
               Reveal Form
             </button>
           </form>
 
-          <div className="mt-6 rounded-2xl border border-white/15 bg-black/30 p-6" data-screenshot-card="true">
+          <div className="mt-6 rounded-2xl border border-white/25 sm:border-white/15 bg-black/50 sm:bg-black/30 p-6">
             {!quizResult ? (
-              <p className="text-amber-50/75">Tap answers. Reveal your meme form.</p>
+              <p className="text-amber-50/90 text-sm">Tap answers. Reveal your meme form.</p>
             ) : (
               <>
-                <p className="text-xs uppercase tracking-[0.24em] text-amber-100/75">Result</p>
-                <h3 className="mt-2 text-4xl">{quizResult.title}</h3>
-                <p className="mt-3 text-amber-50/85">{quizResult.copy}</p>
-                <p className="mt-2 text-lg text-amber-200">{quizResult.chant}</p>
+                <p className="text-[10px] sm:text-xs uppercase tracking-[0.24em] text-amber-100/85 sm:text-amber-100/75">Result</p>
+                <h3 className="mt-2 text-3xl sm:text-4xl text-white/95">{quizResult.title}</h3>
+                <p className="mt-3 text-sm sm:text-base text-amber-50/90">{quizResult.copy}</p>
+                <p className="mt-2 text-base sm:text-lg text-amber-200">{quizResult.chant}</p>
                 <div className="mt-5 flex flex-wrap gap-3">
-                  <button onClick={copyResultForX} className="rounded-full border border-amber-200/40 bg-amber-200/10 px-4 py-2 text-[10px] uppercase tracking-[0.14em] text-amber-100 sm:px-5 sm:text-xs sm:tracking-[0.2em]">
+                  <button onClick={copyResultForX} className="rounded-full border border-amber-200/50 sm:border-amber-200/40 bg-amber-200/15 sm:bg-amber-200/10 px-4 py-2 text-[10px] uppercase tracking-[0.14em] text-amber-100/95 sm:px-5 sm:text-xs sm:tracking-[0.2em]">
                     Copy Result For X
                   </button>
-                  <p className="self-center text-[10px] uppercase tracking-[0.14em] text-amber-100/70 sm:text-xs sm:tracking-[0.2em]">Post it. Dogs bark. Butterflies fly.</p>
+                  <p className="self-center text-[10px] uppercase tracking-[0.14em] text-amber-100/85 sm:text-amber-100/70 sm:text-xs sm:tracking-[0.2em]">Post it. Dogs bark. Butterflies fly.</p>
                 </div>
               </>
             )}
@@ -619,15 +685,15 @@ export default function Home() {
 
       <section id="migration" className="story-panel z-10 px-4">
         <div className="w-[min(1000px,95vw)]">
-          <h2 className="text-center text-3xl sm:text-6xl">MIGRATION SEASON</h2>
-          <p className="mt-3 text-center text-sm uppercase tracking-[0.2em] text-amber-100/70">No roadmap essays. Just movement.</p>
+          <h2 className="text-center text-3xl sm:text-6xl text-white/95">MIGRATION SEASON</h2>
+          <p className="mt-3 text-center text-xs sm:text-sm uppercase tracking-[0.2em] text-amber-100/90 sm:text-amber-100/70">No roadmap essays. Just movement.</p>
 
           <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {migrationStages.map((stage, idx) => (
-              <div key={stage} className="glass-card rounded-2xl p-5">
-                <p className="text-xs uppercase tracking-[0.24em] text-amber-100/75">Stage {idx + 1}</p>
-                <p className="mt-2 text-2xl">{stage}</p>
-                <p className="mt-2 text-sm text-amber-50/75">🐛 → 🦋</p>
+              <div key={stage} className="glass-card rounded-2xl p-5 border-white/25 sm:border-white/15 bg-black/60 sm:bg-black/30">
+                <p className="text-[10px] sm:text-xs uppercase tracking-[0.24em] text-amber-100/90 sm:text-amber-100/75">Stage {idx + 1}</p>
+                <p className="mt-2 text-xl sm:text-2xl text-white/95">{stage}</p>
+                <p className="mt-2 text-sm text-amber-50/85">🐛 → 🦋</p>
               </div>
             ))}
           </div>
@@ -635,25 +701,25 @@ export default function Home() {
       </section>
 
       <section id="community" className="story-panel z-10 px-4 pb-24">
-        <div className="glass-card w-[min(1040px,96vw)] rounded-[2rem] p-6 sm:p-10">
-          <h2 className="text-3xl sm:text-6xl">COMMUNITY WALL</h2>
-          <p className="mt-3 max-w-2xl text-sm uppercase tracking-[0.2em] text-amber-100/70">Plant Your Flower. Join the movement.</p>
+        <div className="glass-card w-[min(1040px,96vw)] rounded-[2rem] p-6 sm:p-10 border-white/25 sm:border-white/15 bg-black/60 sm:bg-black/30">
+          <h2 className="text-3xl sm:text-6xl text-white/95">COMMUNITY WALL</h2>
+          <p className="mt-3 max-w-2xl text-xs sm:text-sm uppercase tracking-[0.2em] text-amber-100/90 sm:text-amber-100/70">Plant Your Flower. Join the movement.</p>
 
           <form onSubmit={plantMessage} className="mt-6 grid gap-3 sm:grid-cols-[1fr,1fr,auto]">
             <input
               value={name}
               onChange={(event) => setName(event.target.value)}
               placeholder="X handle or name"
-              className="rounded-2xl border border-white/25 bg-black/20 px-4 py-3 text-sm text-[#fff7e8] placeholder:text-[#f7ddb4]/65 focus:border-amber-200 focus:outline-none"
+              className="rounded-2xl border border-white/30 sm:border-white/25 bg-black/50 sm:bg-black/20 px-4 py-3 text-xs sm:text-sm text-amber-50/95 placeholder:text-amber-100/65 sm:placeholder:text-amber-100/50 focus:border-amber-200 focus:outline-none"
             />
             <input
               value={message}
               onChange={(event) => setMessage(event.target.value)}
               placeholder="Drop your swarm message"
-              className="rounded-2xl border border-white/25 bg-black/20 px-4 py-3 text-sm text-[#fff7e8] placeholder:text-[#f7ddb4]/65 focus:border-amber-200 focus:outline-none"
+              className="rounded-2xl border border-white/30 sm:border-white/25 bg-black/50 sm:bg-black/20 px-4 py-3 text-xs sm:text-sm text-amber-50/95 placeholder:text-amber-100/65 sm:placeholder:text-amber-100/50 focus:border-amber-200 focus:outline-none"
             />
-            <button className="rounded-2xl bg-gradient-to-r from-amber-300 to-orange-300 px-5 py-3 text-sm font-semibold text-[#1f2326]">
-              Plant Your Flower
+            <button className="rounded-2xl bg-gradient-to-r from-amber-300 to-orange-300 px-4 sm:px-5 py-3 text-xs sm:text-sm font-semibold text-black/95 whitespace-nowrap">
+              Plant
             </button>
           </form>
 
@@ -674,22 +740,22 @@ export default function Home() {
             ))}
           </div>
 
-          <div className="mt-5 grid gap-2 text-sm text-[#f8e5c3] sm:grid-cols-2">
+          <div className="mt-5 grid gap-2 text-[11px] sm:text-sm text-amber-50/90 sm:text-amber-100/85 sm:grid-cols-2">
             {wallFlowers.slice(0, 8).map((flower) => (
-              <p key={`wall-${flower.id}`}>
-                {flower.name}: {flower.message}
+              <p key={`wall-${flower.id}`} className="break-words">
+                <span className="font-semibold text-amber-200">{flower.name}:</span> {flower.message}
               </p>
             ))}
           </div>
         </div>
       </section>
 
-      <div className="fixed inset-x-0 bottom-0 z-[60] border-t border-white/15 bg-black/70 px-2 py-2 backdrop-blur-md md:hidden">
+      <div className="fixed inset-x-0 bottom-0 z-[60] border-t border-white/20 bg-black/85 px-2 py-2 backdrop-blur-lg md:hidden">
         <div className="grid grid-cols-4 gap-2">
-          <a href="https://jup.ag" target="_blank" rel="noreferrer" className="rounded-xl bg-amber-300 px-2 py-2 text-center text-[10px] font-bold uppercase tracking-[0.1em] text-black">Buy</a>
-          <button onClick={copyContractAddress} className="rounded-xl border border-white/25 bg-white/5 px-2 py-2 text-[10px] font-semibold uppercase tracking-[0.1em] text-amber-100">CA</button>
-          <a href="https://x.com" target="_blank" rel="noreferrer" className="rounded-xl border border-white/25 bg-white/5 px-2 py-2 text-center text-[10px] font-semibold uppercase tracking-[0.1em] text-amber-100">X</a>
-          <a href="https://t.me" target="_blank" rel="noreferrer" className="rounded-xl border border-white/25 bg-white/5 px-2 py-2 text-center text-[10px] font-semibold uppercase tracking-[0.1em] text-amber-100">TG</a>
+          <a href="https://jup.ag" target="_blank" rel="noreferrer" className="rounded-xl bg-amber-300 px-2 py-2 text-center text-[10px] font-bold uppercase tracking-[0.1em] text-black hover:bg-amber-400">Buy</a>
+          <button onClick={copyContractAddress} className="rounded-xl border border-white/30 bg-white/8 px-2 py-2 text-[10px] font-semibold uppercase tracking-[0.1em] text-amber-100/95 hover:bg-white/15">CA</button>
+          <a href="https://x.com" target="_blank" rel="noreferrer" className="rounded-xl border border-white/30 bg-white/8 px-2 py-2 text-center text-[10px] font-semibold uppercase tracking-[0.1em] text-amber-100/95 hover:bg-white/15">X</a>
+          <a href="https://t.me" target="_blank" rel="noreferrer" className="rounded-xl border border-white/30 bg-white/8 px-2 py-2 text-center text-[10px] font-semibold uppercase tracking-[0.1em] text-amber-100/95 hover:bg-white/15">TG</a>
         </div>
       </div>
     </main>
