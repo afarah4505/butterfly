@@ -104,6 +104,8 @@ export default function Home() {
   const [nightMix, setNightMix] = useState(0.1);
   const [easterEgg, setEasterEgg] = useState(easterEggs[0]);
   const [showEgg, setShowEgg] = useState(true);
+  const [isPhone, setIsPhone] = useState(false);
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
 
   const [butterfliesMigrated, setButterfliesMigrated] = useState(12841);
   const [flowersPlanted, setFlowersPlanted] = useState(4112);
@@ -119,16 +121,37 @@ export default function Home() {
   const [panicSells, setPanicSells] = useState("2");
   const [quizResult, setQuizResult] = useState<QuizResult | null>(null);
 
+  const shouldReduceEffects = isPhone || prefersReducedMotion;
+
   const heroParticles = useMemo(
     () =>
-      Array.from({ length: 22 }, (_, idx) => ({
+      Array.from({ length: shouldReduceEffects ? 10 : 22 }, (_, idx) => ({
         id: idx,
         left: 4 + Math.random() * 92,
         top: 8 + Math.random() * 80,
         speed: 12 + Math.random() * 12,
       })),
-    []
+    [shouldReduceEffects]
   );
+
+  useEffect(() => {
+    const phoneQuery = window.matchMedia("(max-width: 767px)");
+    const reducedMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+    const applyPreferences = () => {
+      setIsPhone(phoneQuery.matches);
+      setPrefersReducedMotion(reducedMotionQuery.matches);
+    };
+
+    applyPreferences();
+    phoneQuery.addEventListener("change", applyPreferences);
+    reducedMotionQuery.addEventListener("change", applyPreferences);
+
+    return () => {
+      phoneQuery.removeEventListener("change", applyPreferences);
+      reducedMotionQuery.removeEventListener("change", applyPreferences);
+    };
+  }, []);
 
   const triggerEgg = (forced?: string) => {
     const pick = forced ?? easterEggs[Math.floor(Math.random() * easterEggs.length)];
@@ -138,6 +161,10 @@ export default function Home() {
   };
 
   useEffect(() => {
+    if (shouldReduceEffects) {
+      return;
+    }
+
     const lenis = new Lenis({
       duration: 1.05,
       smoothWheel: true,
@@ -156,9 +183,13 @@ export default function Home() {
       cancelAnimationFrame(frame);
       lenis.destroy();
     };
-  }, []);
+  }, [shouldReduceEffects]);
 
   useEffect(() => {
+    if (shouldReduceEffects) {
+      return;
+    }
+
     const sections = gsap.utils.toArray<HTMLElement>(".story-panel");
     sections.forEach((section) => {
       gsap.fromTo(
@@ -182,7 +213,7 @@ export default function Home() {
     return () => {
       ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
     };
-  }, []);
+  }, [shouldReduceEffects]);
 
   useEffect(() => {
     const timer = window.setInterval(() => {
@@ -277,16 +308,16 @@ export default function Home() {
     triggerEgg("The cocoon was bullish.");
   };
 
-  const gardenHeight = 320 + Math.min(220, wallFlowers.length * 4);
+  const gardenHeight = (isPhone ? 280 : 320) + Math.min(isPhone ? 160 : 220, wallFlowers.length * 4);
 
   return (
     <main className="relative min-h-screen overflow-x-clip">
-      <ThreeBackdrop nightMix={nightMix} />
+      <ThreeBackdrop nightMix={nightMix} reduceEffects={shouldReduceEffects} />
       <div className="sun-rays" />
       <div className="mist-overlay" />
 
       <div className="fixed inset-0 z-[2] pointer-events-none">
-        {Array.from({ length: 20 }).map((_, idx) => (
+        {Array.from({ length: shouldReduceEffects ? 8 : 20 }).map((_, idx) => (
           <span
             key={`pollen-${idx}`}
             className="pollen-drift"
@@ -314,19 +345,19 @@ export default function Home() {
       <motion.div
         initial={{ opacity: 0, y: -14 }}
         animate={{ opacity: showEgg ? 1 : 0, y: showEgg ? 0 : -14 }}
-        className="fixed right-4 top-6 z-[45] rounded-full border border-amber-100/40 bg-black/55 px-4 py-2 text-xs uppercase tracking-[0.24em] text-amber-100 backdrop-blur-md"
+        className="fixed right-2 top-4 z-[45] max-w-[70vw] rounded-full border border-amber-100/40 bg-black/55 px-3 py-2 text-[10px] uppercase tracking-[0.18em] text-amber-100 backdrop-blur-md sm:right-4 sm:top-6 sm:max-w-none sm:px-4 sm:text-xs sm:tracking-[0.24em]"
       >
         {easterEgg}
       </motion.div>
 
-      <section className="relative z-10 min-h-screen overflow-hidden px-4 pb-16 pt-6 sm:px-8 lg:px-12">
+      <section className="relative z-10 min-h-screen overflow-hidden px-4 pb-10 pt-4 sm:px-8 sm:pb-16 sm:pt-6 lg:px-12">
         <div className="absolute inset-0 bg-[#071118]" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_20%,rgba(255,206,126,0.3),transparent_20%),radial-gradient(circle_at_70%_14%,rgba(255,160,76,0.22),transparent_24%),linear-gradient(180deg,rgba(6,15,20,0.2),rgba(6,15,20,0.92)_68%,rgba(6,15,20,1))]" />
         <div className="absolute inset-0 bg-[url('/images/butterfly-hero.png')] bg-cover bg-center opacity-15 blur-2xl scale-110" />
 
-        <div className="relative z-20 mx-auto flex min-h-[92svh] max-w-7xl flex-col">
-          <nav className="mb-8 flex items-center justify-between rounded-full border border-white/10 bg-black/20 px-4 py-3 backdrop-blur-lg">
-            <a href="#home" className="text-xs font-semibold uppercase tracking-[0.3em] text-amber-100">BFLY Movement</a>
+        <div className="relative z-20 mx-auto flex min-h-[88svh] max-w-7xl flex-col sm:min-h-[92svh]">
+          <nav className="mb-6 flex items-center justify-between rounded-full border border-white/10 bg-black/20 px-4 py-3 backdrop-blur-lg sm:mb-8">
+            <a href="#home" className="text-[10px] font-semibold uppercase tracking-[0.2em] text-amber-100 sm:text-xs sm:tracking-[0.3em]">BFLY Movement</a>
             <div className="hidden items-center gap-5 text-[11px] uppercase tracking-[0.22em] text-amber-50/75 md:flex">
               <a href="#traders" className="transition hover:text-amber-100">Traders</a>
               <a href="#cocoon" className="transition hover:text-amber-100">Cocoon</a>
@@ -337,34 +368,53 @@ export default function Home() {
             </div>
           </nav>
 
+          <div className="mb-5 flex gap-2 overflow-x-auto pb-2 md:hidden">
+            {[
+              ["#traders", "Traders"],
+              ["#cocoon", "Cocoon"],
+              ["#swarm", "Swarm"],
+              ["#test", "Test"],
+              ["#migration", "Migration"],
+              ["#community", "Community"],
+            ].map(([href, label]) => (
+              <a
+                key={href}
+                href={href}
+                className="shrink-0 rounded-full border border-white/15 bg-black/25 px-3 py-2 text-[10px] uppercase tracking-[0.16em] text-amber-100/85"
+              >
+                {label}
+              </a>
+            ))}
+          </div>
+
           <div id="home" className="grid flex-1 items-center gap-8 lg:grid-cols-[1fr,1.05fr]">
             <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9 }}>
-              <p className="text-xs uppercase tracking-[0.36em] text-amber-200/85">🐛 → 🦋 THE BUTTERFLY EFFECT</p>
-              <h1 className="mt-6 text-5xl font-bold leading-[0.9] text-white sm:text-7xl lg:text-8xl">
+              <p className="text-[10px] uppercase tracking-[0.24em] text-amber-200/85 sm:text-xs sm:tracking-[0.36em]">🐛 → 🦋 THE BUTTERFLY EFFECT</p>
+              <h1 className="mt-4 text-4xl font-bold leading-[0.9] text-white sm:mt-6 sm:text-7xl lg:text-8xl">
                 FROM CATERPILLAR
                 <br />
                 TO MAIN CHARACTER.
               </h1>
-              <p className="mt-6 max-w-xl text-base leading-8 text-amber-50/85 sm:text-lg">
+              <p className="mt-4 max-w-xl text-sm leading-7 text-amber-50/85 sm:mt-6 sm:text-lg sm:leading-8">
                 Most traders stay caterpillars. A few survive the cocoon. Welcome to the Butterfly Effect.
               </p>
 
-              <div className="mt-8 flex flex-wrap gap-4">
-                <a href="#community" className="rounded-full bg-gradient-to-r from-amber-300 to-orange-400 px-7 py-3 text-sm font-semibold text-black shadow-[0_0_40px_rgba(255,184,96,0.2)]">Join The Swarm</a>
-                <a href="#test" className="rounded-full border border-amber-200/50 bg-white/5 px-7 py-3 text-sm font-semibold text-amber-50 backdrop-blur-md">Begin Metamorphosis</a>
+              <div className="mt-6 flex flex-wrap gap-3 sm:mt-8 sm:gap-4">
+                <a href="#community" className="rounded-full bg-gradient-to-r from-amber-300 to-orange-400 px-5 py-2.5 text-xs font-semibold text-black shadow-[0_0_40px_rgba(255,184,96,0.2)] sm:px-7 sm:py-3 sm:text-sm">Join The Swarm</a>
+                <a href="#test" className="rounded-full border border-amber-200/50 bg-white/5 px-5 py-2.5 text-xs font-semibold text-amber-50 backdrop-blur-md sm:px-7 sm:py-3 sm:text-sm">Begin Metamorphosis</a>
               </div>
 
-              <div className="mt-10 flex items-center gap-3 rounded-2xl border border-white/10 bg-black/25 px-4 py-4 text-2xl sm:text-3xl">
+              <div className="mt-7 flex items-center gap-2 rounded-2xl border border-white/10 bg-black/25 px-3 py-3 text-xl sm:mt-10 sm:gap-3 sm:px-4 sm:py-4 sm:text-3xl">
                 {heroSymbols.map((symbol, idx) => (
                   <motion.span
                     key={symbol}
-                    animate={{ y: [0, -8, 0], opacity: [0.55, 1, 0.55] }}
-                    transition={{ duration: 2.4, repeat: Infinity, delay: idx * 0.25 }}
+                    animate={shouldReduceEffects ? { opacity: 1 } : { y: [0, -8, 0], opacity: [0.55, 1, 0.55] }}
+                    transition={shouldReduceEffects ? { duration: 0.2 } : { duration: 2.4, repeat: Infinity, delay: idx * 0.25 }}
                   >
                     {symbol}
                   </motion.span>
                 ))}
-                <span className="ml-2 text-xs uppercase tracking-[0.24em] text-amber-100/70">Transformation Loop</span>
+                <span className="ml-1 text-[10px] uppercase tracking-[0.16em] text-amber-100/70 sm:ml-2 sm:text-xs sm:tracking-[0.24em]">Transformation Loop</span>
               </div>
             </motion.div>
 
@@ -372,7 +422,7 @@ export default function Home() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 1.1 }}
-              className="relative min-h-[54svh] overflow-hidden rounded-[2rem] border border-amber-100/20 bg-black/20 shadow-[0_35px_120px_rgba(0,0,0,0.52)]"
+              className="relative min-h-[44svh] overflow-hidden rounded-[1.6rem] border border-amber-100/20 bg-black/20 shadow-[0_35px_120px_rgba(0,0,0,0.52)] sm:min-h-[54svh] sm:rounded-[2rem]"
             >
               <Image
                 src="/images/butterfly-hero.png"
@@ -389,8 +439,8 @@ export default function Home() {
                   key={particle.id}
                   className="pointer-events-none absolute text-[10px] uppercase tracking-[0.25em] text-amber-100/65"
                   style={{ left: `${particle.left}%`, top: `${particle.top}%` }}
-                  animate={{ y: [0, -14, 0], opacity: [0.15, 0.9, 0.15] }}
-                  transition={{ duration: particle.speed, repeat: Infinity, ease: "easeInOut" }}
+                  animate={shouldReduceEffects ? { opacity: 0.5 } : { y: [0, -14, 0], opacity: [0.15, 0.9, 0.15] }}
+                  transition={shouldReduceEffects ? { duration: 0.2 } : { duration: particle.speed, repeat: Infinity, ease: "easeInOut" }}
                 >
                   🐛→🦋
                 </motion.span>
@@ -402,7 +452,7 @@ export default function Home() {
 
       <section id="traders" className="story-panel z-10 px-4">
         <div className="w-[min(1080px,96vw)]">
-          <h2 className="text-center text-4xl sm:text-6xl">THE THREE TYPES OF TRADERS</h2>
+          <h2 className="text-center text-3xl sm:text-6xl">THE THREE TYPES OF TRADERS</h2>
           <p className="mt-4 text-center text-sm uppercase tracking-[0.2em] text-amber-100/75">Dogs barked. Cats meowed. Frogs croaked. We transformed.</p>
           <div className="mt-8 grid gap-4 md:grid-cols-3">
             {traderTypes.map((card) => (
@@ -423,8 +473,8 @@ export default function Home() {
       <section id="cocoon" className="story-panel z-10 px-4">
         <div className="glass-card cocoon-card w-[min(980px,95vw)] overflow-hidden rounded-[2rem] p-8 sm:p-12">
           <p className="text-xs uppercase tracking-[0.32em] text-amber-200/80">THE COCOON</p>
-          <h2 className="mt-3 text-4xl sm:text-6xl">Everyone thought we disappeared.</h2>
-          <h3 className="mt-3 text-3xl text-amber-100 sm:text-5xl">We were transforming.</h3>
+          <h2 className="mt-3 text-3xl sm:text-6xl">Everyone thought we disappeared.</h2>
+          <h3 className="mt-3 text-2xl text-amber-100 sm:text-5xl">We were transforming.</h3>
 
           <div className="mt-8 grid gap-8 lg:grid-cols-[1fr,0.9fr]">
             <p className="max-w-xl text-base leading-8 text-amber-50/82">
@@ -433,9 +483,9 @@ export default function Home() {
             </p>
             <div className="relative min-h-56 rounded-3xl border border-white/15 bg-black/25 p-4">
               <div className="cocoon-shell" />
-              <motion.span className="crack-line crack-1" animate={{ scaleY: [0.2, 1, 0.45] }} transition={{ duration: 2.2, repeat: Infinity }} />
-              <motion.span className="crack-line crack-2" animate={{ scaleY: [0.3, 1, 0.5] }} transition={{ duration: 2.1, repeat: Infinity, delay: 0.25 }} />
-              <motion.span className="crack-line crack-3" animate={{ scaleY: [0.25, 1, 0.4] }} transition={{ duration: 2.4, repeat: Infinity, delay: 0.5 }} />
+              <motion.span className="crack-line crack-1" animate={shouldReduceEffects ? { scaleY: 0.7 } : { scaleY: [0.2, 1, 0.45] }} transition={shouldReduceEffects ? { duration: 0.2 } : { duration: 2.2, repeat: Infinity }} />
+              <motion.span className="crack-line crack-2" animate={shouldReduceEffects ? { scaleY: 0.75 } : { scaleY: [0.3, 1, 0.5] }} transition={shouldReduceEffects ? { duration: 0.2 } : { duration: 2.1, repeat: Infinity, delay: 0.25 }} />
+              <motion.span className="crack-line crack-3" animate={shouldReduceEffects ? { scaleY: 0.68 } : { scaleY: [0.25, 1, 0.4] }} transition={shouldReduceEffects ? { duration: 0.2 } : { duration: 2.4, repeat: Infinity, delay: 0.5 }} />
             </div>
           </div>
         </div>
@@ -443,7 +493,7 @@ export default function Home() {
 
       <section id="swarm" className="story-panel z-10 px-4">
         <div className="glass-card w-[min(1020px,96vw)] rounded-[2rem] p-6 sm:p-10">
-          <h2 className="text-4xl sm:text-6xl">THE SWARM</h2>
+          <h2 className="text-3xl sm:text-6xl">THE SWARM</h2>
           <p className="mt-3 text-sm uppercase tracking-[0.2em] text-amber-100/70">Not tokenomics. Movement metrics.</p>
 
           <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -470,7 +520,7 @@ export default function Home() {
               <button
                 key={action.label}
                 onClick={() => runSwarmAction(action)}
-                className="rounded-2xl border border-amber-200/30 bg-amber-200/10 px-4 py-4 text-left text-sm uppercase tracking-[0.2em] text-amber-50 transition hover:-translate-y-1 hover:bg-amber-200/20"
+                className="rounded-2xl border border-amber-200/30 bg-amber-200/10 px-4 py-4 text-left text-xs uppercase tracking-[0.15em] text-amber-50 transition hover:-translate-y-1 hover:bg-amber-200/20 sm:text-sm sm:tracking-[0.2em]"
               >
                 {action.label}
               </button>
@@ -481,7 +531,7 @@ export default function Home() {
 
       <section id="test" className="story-panel z-10 px-4">
         <div className="glass-card w-[min(1000px,95vw)] rounded-[2rem] p-6 sm:p-10">
-          <h2 className="text-4xl sm:text-6xl">ARE YOU READY TO FLY?</h2>
+          <h2 className="text-3xl sm:text-6xl">ARE YOU READY TO FLY?</h2>
           <p className="mt-3 text-sm uppercase tracking-[0.2em] text-amber-100/70">Take the metamorphosis test. Screenshot your result.</p>
 
           <form onSubmit={evaluateQuiz} className="mt-7 grid gap-4 sm:grid-cols-3">
@@ -528,10 +578,10 @@ export default function Home() {
                 <p className="mt-3 text-amber-50/85">{quizResult.copy}</p>
                 <p className="mt-2 text-lg text-amber-200">{quizResult.chant}</p>
                 <div className="mt-5 flex flex-wrap gap-3">
-                  <button onClick={copyResultForX} className="rounded-full border border-amber-200/40 bg-amber-200/10 px-5 py-2 text-xs uppercase tracking-[0.2em] text-amber-100">
+                  <button onClick={copyResultForX} className="rounded-full border border-amber-200/40 bg-amber-200/10 px-4 py-2 text-[10px] uppercase tracking-[0.14em] text-amber-100 sm:px-5 sm:text-xs sm:tracking-[0.2em]">
                     Copy Result For X
                   </button>
-                  <p className="self-center text-xs uppercase tracking-[0.2em] text-amber-100/70">Screenshot this card and post: 🐛 → 🦋</p>
+                  <p className="self-center text-[10px] uppercase tracking-[0.14em] text-amber-100/70 sm:text-xs sm:tracking-[0.2em]">Screenshot this card and post: 🐛 → 🦋</p>
                 </div>
               </>
             )}
@@ -541,7 +591,7 @@ export default function Home() {
 
       <section id="migration" className="story-panel z-10 px-4">
         <div className="w-[min(1000px,95vw)]">
-          <h2 className="text-center text-4xl sm:text-6xl">THE MIGRATION</h2>
+          <h2 className="text-center text-3xl sm:text-6xl">THE MIGRATION</h2>
           <p className="mt-3 text-center text-sm uppercase tracking-[0.2em] text-amber-100/70">Roadmaps are dead. Seasons are alive.</p>
 
           <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -558,7 +608,7 @@ export default function Home() {
 
       <section id="community" className="story-panel z-10 px-4 pb-24">
         <div className="glass-card w-[min(1040px,96vw)] rounded-[2rem] p-6 sm:p-10">
-          <h2 className="text-4xl sm:text-6xl">COMMUNITY WALL</h2>
+          <h2 className="text-3xl sm:text-6xl">COMMUNITY WALL</h2>
           <p className="mt-3 max-w-2xl text-sm uppercase tracking-[0.2em] text-amber-100/70">Every message plants a flower. The garden grows with the swarm.</p>
 
           <form onSubmit={plantMessage} className="mt-6 grid gap-3 sm:grid-cols-[1fr,1fr,auto]">
@@ -584,9 +634,9 @@ export default function Home() {
               <motion.button
                 key={flower.id}
                 type="button"
-                whileHover={{ scale: 1.16, y: -8 }}
-                animate={{ y: [0, -4, 0], rotate: [0, 2, -2, 0] }}
-                transition={{ duration: 4 + (idx % 4), repeat: Infinity, ease: "easeInOut" }}
+                whileHover={isPhone ? undefined : { scale: 1.16, y: -8 }}
+                animate={shouldReduceEffects ? { y: 0, rotate: 0 } : { y: [0, -4, 0], rotate: [0, 2, -2, 0] }}
+                transition={shouldReduceEffects ? { duration: 0.2 } : { duration: 4 + (idx % 4), repeat: Infinity, ease: "easeInOut" }}
                 className="flower"
                 style={{ left: `${flower.x}%`, top: `${flower.y}%`, color: flower.color, width: 28, height: 28 }}
                 title={`${flower.name}: ${flower.message}`}

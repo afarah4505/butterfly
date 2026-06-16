@@ -309,3 +309,32 @@ h4 {
     height: 180px;
   }
 }
+
+@media (max-width: 768px) {
+  .story-panel {
+    min-height: auto;
+    padding: 4rem 1rem;
+    align-items: start;
+  }
+
+  .sun-rays,
+  .mist-overlay {
+    opacity: 0.35;
+  }
+
+  .forest-layer.layer-1 {
+    height: 36vh;
+  }
+
+  .forest-layer.layer-2 {
+    height: 28vh;
+  }
+
+  .forest-layer.layer-3 {
+    height: 18vh;
+  }
+
+  .glass-card {
+    backdrop-filter: blur(8px);
+  }
+}

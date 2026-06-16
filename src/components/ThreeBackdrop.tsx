@@ -5,9 +5,10 @@ import * as THREE from "three";
 
 type ThreeBackdropProps = {
   nightMix: number;
+  reduceEffects?: boolean;
 };
 
-export default function ThreeBackdrop({ nightMix }: ThreeBackdropProps) {
+export default function ThreeBackdrop({ nightMix, reduceEffects = false }: ThreeBackdropProps) {
   const mountRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -28,15 +29,20 @@ export default function ThreeBackdrop({ nightMix }: ThreeBackdropProps) {
 
     let renderer: THREE.WebGLRenderer;
     try {
-      renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true, powerPreference: "high-performance" });
+      renderer = new THREE.WebGLRenderer({
+        alpha: true,
+        antialias: !reduceEffects,
+        powerPreference: "high-performance",
+      });
     } catch {
       return;
     }
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.8));
+
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, reduceEffects ? 1.2 : 1.8));
     renderer.setSize(mount.clientWidth, mount.clientHeight);
     mount.appendChild(renderer.domElement);
 
-    const pointCount = 1200;
+    const pointCount = reduceEffects ? 420 : 1200;
     const positions = new Float32Array(pointCount * 3);
 
     for (let i = 0; i < pointCount; i += 1) {
@@ -64,7 +70,7 @@ export default function ThreeBackdrop({ nightMix }: ThreeBackdropProps) {
     const leafMaterial = new THREE.MeshBasicMaterial({ color: 0x89b775, transparent: true, opacity: 0.3 });
     const leaves = new THREE.Group();
 
-    for (let i = 0; i < 40; i += 1) {
+    for (let i = 0; i < (reduceEffects ? 14 : 40); i += 1) {
       const leaf = new THREE.Mesh(leafGeometry, leafMaterial);
       leaf.position.set((Math.random() - 0.5) * 70, (Math.random() - 0.5) * 50, (Math.random() - 0.5) * 10);
       leaf.rotation.z = Math.random() * Math.PI;
@@ -90,7 +96,9 @@ export default function ThreeBackdrop({ nightMix }: ThreeBackdropProps) {
     };
 
     window.addEventListener("resize", onResize);
-    window.addEventListener("pointermove", onPointerMove);
+    if (!reduceEffects) {
+      window.addEventListener("pointermove", onPointerMove);
+    }
 
     let frameId = 0;
 
@@ -123,7 +131,9 @@ export default function ThreeBackdrop({ nightMix }: ThreeBackdropProps) {
     return () => {
       cancelAnimationFrame(frameId);
       window.removeEventListener("resize", onResize);
-      window.removeEventListener("pointermove", onPointerMove);
+      if (!reduceEffects) {
+        window.removeEventListener("pointermove", onPointerMove);
+      }
       particleGeometry.dispose();
       particleMaterial.dispose();
       leafGeometry.dispose();
@@ -131,7 +141,7 @@ export default function ThreeBackdrop({ nightMix }: ThreeBackdropProps) {
       renderer.dispose();
       mount.removeChild(renderer.domElement);
     };
-  }, []);
+  }, [reduceEffects]);
 
   return (
     <div
