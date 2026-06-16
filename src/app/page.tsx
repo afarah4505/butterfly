@@ -10,152 +10,138 @@ import ThreeBackdrop from "@/components/ThreeBackdrop";
 
 gsap.registerPlugin(ScrollTrigger);
 
-type WallFlower = {
-  id: number;
-  name: string;
-  message: string;
-  x: number;
-  y: number;
-  color: string;
+type Stage = "Caterpillar" | "Cocoon" | "Butterfly" | "Migration Leader";
+
+type ResultCard = {
+  icon: string;
+  title: Stage;
+  line: string;
+  arc: string;
+  quote: string;
 };
 
-type QuizResult = {
-  title: "Still a Caterpillar" | "Emerging Butterfly" | "Full Butterfly";
-  copy: string;
-  chant: string;
-};
-
-const easterEggs = [
-  "Paper hands detected.",
-  "The cocoon was bullish.",
-  "Bird attack avoided.",
-  "Wen wings?",
-  "Metamorphosis successful.",
-  "Migration season approaching.",
-  "Wings loading...",
-  "Butterfly spotted.",
-  "The Butterfly has entered the chat.",
-  "You don't buy BFLY. You become it.",
-];
-
-const traderTypes = [
-  {
-    title: "Paper Hands",
-    icon: "📉",
-    points: ["Panic sells", "Chases green candles", "Gets eaten by birds"],
-  },
-  {
-    title: "Bag Holders",
-    icon: "🥚",
-    points: ["Sleeps in cocoon", "Confused", "Survives winter"],
-  },
-  {
-    title: "Butterflies",
-    icon: "🦋",
-    points: ["Sees beyond charts", "Migrates with the swarm", "Creates the trend"],
-  },
-];
-
-const migrationStages = [
-  "Paper Hands Detected",
-  "The Cocoon Was Bullish",
-  "Wen Wings?",
-  "Butterflies Fly",
-  "Migration Season",
-  "Main Character Mode",
-];
-
-const beforeAfterBFLY = [
-  {
-    before: "Panic sells at 2x",
-    after: "Holds through 100x",
-  },
-  {
-    before: "Checks chart every 30 seconds",
-    after: "Checks chart every season",
-  },
-  {
-    before: "Paper hands shaking",
-    after: "Diamond hands flying",
-  },
-  {
-    before: "Rugs ruined the portfolio",
-    after: "BFLY is the portfolio",
-  },
-];
-
-const swarmActions = [
-  { label: "Meme Raid", butterflies: 850, events: 2, territories: 1 },
-  { label: "Diamond Hold", butterflies: 1200, events: 1, territories: 1 },
-  { label: "Post The Arrow", butterflies: 1600, events: 3, territories: 2 },
-  { label: "Community Space", butterflies: 2300, events: 4, territories: 3 },
-];
-
-const heroSymbols = ["🐛", "🥚", "⚡", "🦋"];
 const CONTRACT_ADDRESS = "0xBFLYBFLYBFLYBFLYBFLYBFLYBFLYBFLYBFLY";
 
-const initialFlowers: WallFlower[] = [
-  {
-    id: 1,
-    name: "@wingmaxi",
-    message: "I survived 3 cycles. Still flapping.",
-    x: 19,
-    y: 52,
-    color: "#ffd486",
+const randomMessages = [
+  "Paper hands detected.",
+  "Migration season approaching.",
+  "The cocoon was bullish.",
+  "Butterfly spotted.",
+  "Wen wings?",
+];
+
+const statusMessages = [
+  "Wings Growing...",
+  "Cocoon Holding...",
+  "Transformation Active...",
+  "Migration Season...",
+];
+
+const dramaticLines = ["Dogs bark.", "Cats meow.", "Frogs croak.", "Butterflies migrate."];
+
+const stageCards: Record<Stage, ResultCard> = {
+  Caterpillar: {
+    icon: "🐛",
+    title: "Caterpillar",
+    line: "Still crawling through fear candles.",
+    arc: "Forest Floor Arc",
+    quote: "Not everyone gets wings.",
   },
-  {
-    id: 2,
-    name: "@chartwitch",
-    message: "From rugs to wings. 🐛 → 🦋",
-    x: 68,
-    y: 38,
-    color: "#9bd5ff",
+  Cocoon: {
+    icon: "🥚",
+    title: "Cocoon",
+    line: "Silent. Hidden. Loading transformation.",
+    arc: "Cocoon Chamber Arc",
+    quote: "The cocoon was bullish.",
   },
-  {
-    id: 3,
-    name: "@cocoonclub",
-    message: "The swarm is the signal.",
-    x: 41,
-    y: 62,
-    color: "#ffa8c9",
+  Butterfly: {
+    icon: "🦋",
+    title: "Butterfly",
+    line: "You stopped chasing. You started flying.",
+    arc: "First Flight Arc",
+    quote: "Wen wings? Right now.",
   },
+  "Migration Leader": {
+    icon: "👑",
+    title: "Migration Leader",
+    line: "Timeline commander. Migration signal source.",
+    arc: "Migration Season Arc",
+    quote: "Butterfly spotted.",
+  },
+};
+
+const swarmActions = [
+  { label: "Join The Swarm", wings: 640, transforms: 2 },
+  { label: "Grow Wings", wings: 920, transforms: 3 },
+  { label: "Begin Migration", wings: 1400, transforms: 4 },
 ];
 
 export default function Home() {
   const { scrollYProgress } = useScroll();
   const [nightMix, setNightMix] = useState(0.1);
-  const [easterEgg, setEasterEgg] = useState(easterEggs[0]);
-  const [showEgg, setShowEgg] = useState(true);
   const [isPhone, setIsPhone] = useState(false);
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
 
-  const [butterfliesMigrated, setButterfliesMigrated] = useState(12841);
+  const [showHeroEvent, setShowHeroEvent] = useState(false);
+  const [easterEgg, setEasterEgg] = useState(randomMessages[0]);
+  const [showEgg, setShowEgg] = useState(false);
+
+  const [statusIndex, setStatusIndex] = useState(0);
+  const [statusMessage, setStatusMessage] = useState(statusMessages[0]);
+  const [statusBar, setStatusBar] = useState(82);
+
+  const [selectedStage, setSelectedStage] = useState<Stage>("Cocoon");
+  const [resultCard, setResultCard] = useState<ResultCard | null>(null);
+
+  const [wingsEarned, setWingsEarned] = useState(12841);
   const [flowersPlanted, setFlowersPlanted] = useState(4112);
   const [territoriesReached, setTerritoriesReached] = useState(73);
-  const [metamorphosisEvents, setMetamorphosisEvents] = useState(8927);
-
-  const [name, setName] = useState("");
-  const [message, setMessage] = useState("");
-  const [wallFlowers, setWallFlowers] = useState<WallFlower[]>(initialFlowers);
-
-  const [rugsSurvived, setRugsSurvived] = useState("2");
-  const [topsBought, setTopsBought] = useState("2");
-  const [panicSells, setPanicSells] = useState("2");
-  const [quizResult, setQuizResult] = useState<QuizResult | null>(null);
-
-  const [migrationStatusIndex, setMigrationStatusIndex] = useState(0);
-  const migrationEmojis = ["🐛", "🥚", "🦋"];
-  const migrationLabels = ["Caterpillar", "Cocoon", "Butterfly"];
+  const [transformationsCompleted, setTransformationsCompleted] = useState(8927);
 
   const shouldReduceEffects = isPhone || prefersReducedMotion;
 
-  const heroParticles = useMemo(
+  const pollenSprites = useMemo(
     () =>
-      Array.from({ length: shouldReduceEffects ? 10 : 22 }, (_, idx) => ({
+      Array.from({ length: shouldReduceEffects ? 10 : 24 }, (_, idx) => ({
         id: idx,
-        left: 4 + Math.random() * 92,
-        top: 8 + Math.random() * 80,
-        speed: 12 + Math.random() * 12,
+        left: Math.random() * 100,
+        top: 58 + Math.random() * 38,
+        duration: 6 + Math.random() * 6,
+        delay: idx * -0.7,
+      })),
+    [shouldReduceEffects]
+  );
+
+  const petalSprites = useMemo(
+    () =>
+      Array.from({ length: shouldReduceEffects ? 8 : 18 }, (_, idx) => ({
+        id: idx,
+        left: 2 + Math.random() * 96,
+        duration: 9 + Math.random() * 9,
+        delay: idx * -1.2,
+      })),
+    [shouldReduceEffects]
+  );
+
+  const fireflies = useMemo(
+    () =>
+      Array.from({ length: shouldReduceEffects ? 10 : 26 }, (_, idx) => ({
+        id: idx,
+        left: Math.random() * 100,
+        top: Math.random() * 100,
+        duration: 4 + Math.random() * 5,
+        delay: idx * -0.45,
+      })),
+    [shouldReduceEffects]
+  );
+
+  const skyButterflies = useMemo(
+    () =>
+      Array.from({ length: shouldReduceEffects ? 3 : 8 }, (_, idx) => ({
+        id: idx,
+        top: 8 + Math.random() * 62,
+        duration: 16 + Math.random() * 18,
+        delay: idx * -4.5,
       })),
     [shouldReduceEffects]
   );
@@ -179,12 +165,31 @@ export default function Home() {
     };
   }, []);
 
-  const triggerEgg = (forced?: string) => {
-    const pick = forced ?? easterEggs[Math.floor(Math.random() * easterEggs.length)];
-    setEasterEgg(pick);
-    setShowEgg(true);
-    window.setTimeout(() => setShowEgg(false), 2600);
-  };
+  useEffect(() => {
+    const intro = window.setTimeout(() => {
+      setShowHeroEvent(true);
+      setShowEgg(true);
+      setEasterEgg("Butterfly spotted.");
+      window.setTimeout(() => setShowEgg(false), 2500);
+    }, 1100);
+    return () => window.clearTimeout(intro);
+  }, []);
+
+  useEffect(() => {
+    const timer = window.setInterval(() => {
+      const nextStatus = (statusIndex + 1) % statusMessages.length;
+      const nextBar = 62 + Math.floor(Math.random() * 35);
+      const nextEgg = randomMessages[Math.floor(Math.random() * randomMessages.length)];
+      setStatusIndex(nextStatus);
+      setStatusMessage(statusMessages[nextStatus]);
+      setStatusBar(nextBar);
+      setEasterEgg(nextEgg);
+      setShowEgg(true);
+      window.setTimeout(() => setShowEgg(false), 2300);
+    }, 9000);
+
+    return () => window.clearInterval(timer);
+  }, [statusIndex]);
 
   useEffect(() => {
     if (shouldReduceEffects) {
@@ -192,7 +197,7 @@ export default function Home() {
     }
 
     const lenis = new Lenis({
-      duration: 1.05,
+      duration: 1.02,
       smoothWheel: true,
       wheelMultiplier: 0.88,
       touchMultiplier: 1.05,
@@ -217,10 +222,12 @@ export default function Home() {
     }
 
     const sections = gsap.utils.toArray<HTMLElement>(".story-panel");
+    const drifts = gsap.utils.toArray<HTMLElement>("[data-drift]");
+
     sections.forEach((section) => {
       gsap.fromTo(
         section,
-        { autoAlpha: 0.2, y: 80 },
+        { autoAlpha: 0.25, y: 70 },
         {
           autoAlpha: 1,
           y: 0,
@@ -230,7 +237,25 @@ export default function Home() {
             trigger: section,
             start: "top 80%",
             end: "bottom 20%",
-            scrub: 0.45,
+            scrub: 0.35,
+          },
+        }
+      );
+    });
+
+    drifts.forEach((node) => {
+      const amount = Number(node.dataset.drift ?? 12);
+      gsap.fromTo(
+        node,
+        { yPercent: amount * -0.35 },
+        {
+          yPercent: amount,
+          ease: "none",
+          scrollTrigger: {
+            trigger: node.closest("section") ?? node,
+            start: "top bottom",
+            end: "bottom top",
+            scrub: true,
           },
         }
       );
@@ -240,15 +265,6 @@ export default function Home() {
       ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
     };
   }, [shouldReduceEffects]);
-
-  useEffect(() => {
-    const timer = window.setInterval(() => {
-      triggerEgg();
-      setMigrationStatusIndex((prev) => (prev + 1) % 3);
-    }, 9200);
-
-    return () => window.clearInterval(timer);
-  }, []);
 
   useMotionValueEvent(scrollYProgress, "change", (value) => {
     const now = new Date();
@@ -260,91 +276,50 @@ export default function Home() {
   });
 
   const runSwarmAction = (action: (typeof swarmActions)[number]) => {
-    setButterfliesMigrated((current) => current + action.butterflies);
-    setMetamorphosisEvents((current) => current + action.events);
-    setTerritoriesReached((current) => current + action.territories);
-    triggerEgg(action.label === "Post The Arrow" ? "Wen wings?" : undefined);
+    setWingsEarned((v) => v + action.wings);
+    setTransformationsCompleted((v) => v + action.transforms);
+    setFlowersPlanted((v) => v + Math.floor(action.wings / 20));
+    setTerritoriesReached((v) => v + 1);
   };
 
-  const evaluateQuiz = (event: FormEvent<HTMLFormElement>) => {
+  const revealCard = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
-    const score = Number(rugsSurvived) * 2 + Number(topsBought) * 2 + Number(panicSells) * 3;
-
-    let result: QuizResult;
-    if (score >= 17) {
-      result = {
-        title: "Still a Caterpillar",
-        copy: "Paper hands detected.",
-        chant: "🐛 → 🦋",
-      };
-    } else if (score >= 10) {
-      result = {
-        title: "Emerging Butterfly",
-        copy: "The cocoon was bullish.",
-        chant: "Wen wings? Soon.",
-      };
-    } else {
-      result = {
-        title: "Full Butterfly",
-        copy: "Migration season. You lead.",
-        chant: "Butterflies fly.",
-      };
-    }
-
-    setQuizResult(result);
-    setButterfliesMigrated((value) => value + 777);
-    setMetamorphosisEvents((value) => value + 5);
-    triggerEgg("Metamorphosis successful.");
+    const card = stageCards[selectedStage];
+    setResultCard(card);
+    setWingsEarned((v) => v + 555);
+    setTransformationsCompleted((v) => v + 3);
   };
 
   const copyResultForX = async () => {
-    if (!quizResult) {
+    if (!resultCard) {
       return;
     }
 
-    const text = `I got \"${quizResult.title}\" on the BFLY metamorphosis test. ${quizResult.chant} #BFLY #CryptoTwitter`;
+    const text = `I am ${resultCard.icon} ${resultCard.title} in the BFLY metamorphosis. ${resultCard.line} ${resultCard.quote} #BFLY`;
     try {
       await navigator.clipboard.writeText(text);
-      triggerEgg("Migration season approaching.");
+      setEasterEgg("Migration season approaching.");
+      setShowEgg(true);
+      window.setTimeout(() => setShowEgg(false), 2000);
     } catch {
-      triggerEgg("Paper hands detected.");
+      setEasterEgg("Paper hands detected.");
+      setShowEgg(true);
+      window.setTimeout(() => setShowEgg(false), 2000);
     }
   };
 
   const copyContractAddress = async () => {
     try {
       await navigator.clipboard.writeText(CONTRACT_ADDRESS);
-      triggerEgg("Contract copied. Migration season.");
+      setEasterEgg("Contract copied. Wings loading...");
+      setShowEgg(true);
+      window.setTimeout(() => setShowEgg(false), 2000);
     } catch {
-      triggerEgg("Paper hands detected.");
+      setEasterEgg("Paper hands detected.");
+      setShowEgg(true);
+      window.setTimeout(() => setShowEgg(false), 2000);
     }
   };
-
-  const plantMessage = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    if (!name.trim() || !message.trim()) {
-      triggerEgg("Wen wings?");
-      return;
-    }
-
-    const flower: WallFlower = {
-      id: Date.now(),
-      name: name.trim(),
-      message: message.trim(),
-      x: 8 + Math.random() * 84,
-      y: 12 + Math.random() * 76,
-      color: ["#ffc37e", "#ff95b5", "#8bf7c9", "#98c9ff", "#ffe88c"][Math.floor(Math.random() * 5)],
-    };
-
-    setWallFlowers((current) => [flower, ...current].slice(0, 85));
-    setFlowersPlanted((current) => current + 1);
-    setTerritoriesReached((current) => (wallFlowers.length % 6 === 0 ? current + 1 : current));
-    setMessage("");
-    triggerEgg("The cocoon was bullish.");
-  };
-
-  const gardenHeight = (isPhone ? 280 : 320) + Math.min(isPhone ? 160 : 220, wallFlowers.length * 4);
 
   return (
     <main className="relative min-h-screen overflow-x-clip">
@@ -352,18 +327,68 @@ export default function Home() {
       <div className="sun-rays" />
       <div className="mist-overlay" />
 
-      <div className="fixed inset-0 z-[2] pointer-events-none">
-        {Array.from({ length: shouldReduceEffects ? 8 : 20 }).map((_, idx) => (
+      <div className="fixed inset-0 z-[2] pointer-events-none overflow-hidden">
+        {pollenSprites.map((item) => (
           <span
-            key={`pollen-${idx}`}
+            key={`p-${item.id}`}
             className="pollen-drift"
             style={{
-              left: `${(idx / 20) * 100}%`,
-              top: `${80 + (idx % 6) * 4}%`,
-              animationDuration: `${6 + (idx % 5) * 2}s`,
-              animationDelay: `${idx * -0.9}s`,
+              left: `${item.left}%`,
+              top: `${item.top}%`,
+              animationDuration: `${item.duration}s`,
+              animationDelay: `${item.delay}s`,
             }}
           />
+        ))}
+
+        {petalSprites.map((item) => (
+          <span
+            key={`pt-${item.id}`}
+            className="petal"
+            style={{
+              left: `${item.left}%`,
+              animationDuration: `${item.duration}s`,
+              animationDelay: `${item.delay}s`,
+            }}
+          />
+        ))}
+
+        {fireflies.map((item) => (
+          <motion.span
+            key={`f-${item.id}`}
+            className="firefly"
+            style={{ left: `${item.left}%`, top: `${item.top}%` }}
+            animate={
+              shouldReduceEffects
+                ? { opacity: 0.55, scale: 1 }
+                : { opacity: [0.1, 0.95, 0.2], scale: [0.7, 1.15, 0.85], y: [0, -10, 0] }
+            }
+            transition={
+              shouldReduceEffects
+                ? { duration: 0.2 }
+                : { duration: item.duration, repeat: Infinity, ease: "easeInOut", delay: item.delay }
+            }
+          />
+        ))}
+
+        {skyButterflies.map((item) => (
+          <motion.span
+            key={`b-${item.id}`}
+            className="sky-butterfly text-lg"
+            style={{ top: `${item.top}%` }}
+            animate={
+              shouldReduceEffects
+                ? { opacity: 0.2, x: 0 }
+                : { x: ["-10vw", "110vw"], opacity: [0, 0.75, 0.2, 0] }
+            }
+            transition={
+              shouldReduceEffects
+                ? { duration: 0.2 }
+                : { duration: item.duration, repeat: Infinity, ease: "linear", delay: item.delay }
+            }
+          >
+            🦋
+          </motion.span>
         ))}
       </div>
 
@@ -381,232 +406,272 @@ export default function Home() {
       <motion.div
         initial={{ opacity: 0, y: -14 }}
         animate={{ opacity: showEgg ? 1 : 0, y: showEgg ? 0 : -14 }}
-        className="fixed right-2 top-4 z-[45] max-w-[70vw] rounded-full border border-amber-100/40 bg-black/55 px-3 py-2 text-[10px] uppercase tracking-[0.18em] text-amber-100 backdrop-blur-md sm:right-4 sm:top-6 sm:max-w-none sm:px-4 sm:text-xs sm:tracking-[0.24em]"
+        className="fixed right-3 top-4 z-[45] max-w-[72vw] rounded-full border border-amber-100/40 bg-black/65 px-3 py-2 text-[10px] uppercase tracking-[0.2em] text-amber-100 backdrop-blur-xl sm:right-5 sm:top-6 sm:max-w-none sm:px-4 sm:text-xs"
       >
         {easterEgg}
       </motion.div>
 
-      <section className="relative z-10 min-h-screen overflow-hidden px-4 pb-10 pt-4 sm:px-8 sm:pb-16 sm:pt-6 lg:px-12">
-        <div className="absolute inset-0 bg-[#071118]" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_20%,rgba(255,206,126,0.3),transparent_20%),radial-gradient(circle_at_70%_14%,rgba(255,160,76,0.22),transparent_24%),linear-gradient(180deg,rgba(6,15,20,0.2),rgba(6,15,20,0.92)_68%,rgba(6,15,20,1))]" />
-        <div className="absolute inset-0 bg-[url('/images/butterfly-hero.png')] bg-cover bg-center opacity-15 blur-2xl scale-110" />
+      <motion.div
+        initial={{ opacity: 0, y: 18 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="status-widget fixed bottom-20 left-3 z-[44] w-[188px] rounded-2xl border border-white/22 bg-black/65 p-3 backdrop-blur-xl sm:bottom-6 sm:left-auto sm:right-5 sm:w-[220px]"
+      >
+        <p className="text-[10px] uppercase tracking-[0.22em] text-amber-100/86">🦋 Migration Season</p>
+        <p className="mt-2 text-sm font-semibold text-white/96">Wings Growing...</p>
+        <div className="mt-3 h-2.5 overflow-hidden rounded-full border border-white/25 bg-black/50">
+          <motion.div
+            className="h-full bg-gradient-to-r from-amber-300 via-orange-300 to-cyan-300"
+            animate={{ width: `${statusBar}%` }}
+            transition={{ duration: 1.1, ease: "easeOut" }}
+          />
+        </div>
+        <p className="mt-2 text-[11px] text-amber-100/84">{randomMessages[statusIndex]}</p>
+      </motion.div>
 
-        <div className="relative z-20 mx-auto flex min-h-[88svh] max-w-7xl flex-col sm:min-h-[92svh]">
-          <nav className="mb-6 flex items-center justify-between rounded-full border border-white/10 bg-black/20 px-4 py-3 backdrop-blur-lg sm:mb-8">
-            <a href="#home" className="text-[10px] font-semibold uppercase tracking-[0.2em] text-amber-100 sm:text-xs sm:tracking-[0.3em]">BFLY Movement</a>
+      <section id="home" className="relative z-10 min-h-screen overflow-hidden px-4 pb-12 pt-4 sm:px-8 sm:pb-16 sm:pt-6 lg:px-12">
+        <div className="absolute inset-0 bg-[#050b10]" />
+
+        <div className="relative z-20 mx-auto flex min-h-[90svh] max-w-7xl flex-col">
+          <nav className="mb-6 flex items-center justify-between rounded-full border border-white/10 bg-black/25 px-4 py-3 backdrop-blur-xl sm:mb-8">
+            <a href="#home" className="text-[10px] font-semibold uppercase tracking-[0.24em] text-amber-100 sm:text-xs sm:tracking-[0.3em]">
+              BFLY Metamorphosis
+            </a>
             <div className="hidden items-center gap-5 text-[11px] uppercase tracking-[0.22em] text-amber-50/75 md:flex">
-              <a href="#traders" className="transition hover:text-amber-100">Traders</a>
+              <a href="#line-theater" className="transition hover:text-amber-100">Ritual</a>
+              <a href="#stage-test" className="transition hover:text-amber-100">Stage</a>
+              <a href="#migration-widget" className="transition hover:text-amber-100">Status</a>
               <a href="#cocoon" className="transition hover:text-amber-100">Cocoon</a>
               <a href="#swarm" className="transition hover:text-amber-100">Swarm</a>
-              <a href="#test" className="transition hover:text-amber-100">Test</a>
-              <a href="#migration" className="transition hover:text-amber-100">Migration</a>
-              <a href="#community" className="transition hover:text-amber-100">Community</a>
             </div>
           </nav>
 
-          <div className="mb-5 flex gap-2 overflow-x-auto pb-2 md:hidden">
-            {[
-              ["#traders", "Traders"],
-              ["#cocoon", "Cocoon"],
-              ["#swarm", "Swarm"],
-              ["#test", "Test"],
-              ["#migration", "Migration"],
-              ["#community", "Community"],
-            ].map(([href, label]) => (
-              <a
-                key={href}
-                href={href}
-                className="shrink-0 rounded-full border border-white/15 bg-black/25 px-3 py-2 text-[10px] uppercase tracking-[0.16em] text-amber-100/85"
-              >
-                {label}
-              </a>
-            ))}
-          </div>
-
-          <div id="home" className="grid flex-1 items-center gap-8 lg:grid-cols-[1fr,1.05fr]">
-            <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9 }}>
-              <p className="text-[10px] uppercase tracking-[0.24em] text-amber-200/85 sm:text-xs sm:tracking-[0.36em]">🐛 → 🦋 THE BUTTERFLY EFFECT</p>
-              <h1 className="mt-4 text-4xl font-bold leading-[0.9] text-white sm:mt-6 sm:text-7xl lg:text-8xl">
-                BUY BFLY
+          <div className="grid flex-1 items-center gap-10 lg:grid-cols-[0.95fr,1.05fr]">
+            <motion.div initial={{ opacity: 0, y: 22 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9 }}>
+              <p className="text-[10px] uppercase tracking-[0.3em] text-amber-200/90 sm:text-xs">🐛 → 🥚 → ⚡ → 🦋</p>
+              <h1 className="mt-4 text-5xl font-bold leading-[0.88] text-white sm:mt-6 sm:text-7xl lg:text-[6.1rem]">
+                THE BUTTERFLY
                 <br />
-                JOIN THE SWARM.
+                HAS BEEN SPOTTED.
               </h1>
-              <p className="mt-4 max-w-xl text-sm leading-7 text-amber-50/85 sm:mt-6 sm:text-base sm:leading-8">
-                Dogs bark. Frogs croak. Butterflies fly.
-              </p>
+              <p className="mt-4 text-xl text-amber-50/92 sm:mt-5 sm:text-2xl">Not everyone gets wings.</p>
 
-              <p className="mt-6 italic text-amber-200/85 sm:mt-8 sm:text-lg">
-                &ldquo;You don&apos;t buy BFLY. You become it.&rdquo;
-              </p>
-
-              <div className="mt-5 grid gap-3 sm:grid-cols-2">
-                <a href="https://jup.ag" target="_blank" rel="noreferrer" className="rounded-full bg-gradient-to-r from-amber-300 to-orange-400 px-5 py-3 text-center text-xs font-semibold uppercase tracking-[0.14em] text-black sm:text-sm">
-                  Buy BFLY
-                </a>
-                <button onClick={copyContractAddress} className="rounded-full border border-amber-200/50 bg-black/30 px-5 py-3 text-xs font-semibold uppercase tracking-[0.14em] text-amber-50 sm:text-sm">
-                  Contract Address
+              <div className="mt-6 grid gap-3 sm:grid-cols-2">
+                <button onClick={() => runSwarmAction(swarmActions[0])} className="action-pill bg-gradient-to-r from-amber-300 to-orange-400 text-black">
+                  JOIN THE SWARM
                 </button>
-                <a href="https://x.com" target="_blank" rel="noreferrer" className="rounded-full border border-white/20 bg-white/5 px-5 py-3 text-center text-xs font-semibold uppercase tracking-[0.14em] text-amber-50 sm:text-sm">
-                  Join X
-                </a>
-                <a href="https://t.me" target="_blank" rel="noreferrer" className="rounded-full border border-white/20 bg-white/5 px-5 py-3 text-center text-xs font-semibold uppercase tracking-[0.14em] text-amber-50 sm:text-sm">
-                  Telegram
-                </a>
+                <button onClick={() => runSwarmAction(swarmActions[2])} className="action-pill border border-white/25 bg-black/45 text-amber-50">
+                  BEGIN MIGRATION
+                </button>
               </div>
 
-              <div className="mt-3 flex items-center gap-2 rounded-xl border sm:border-white/15 sm:bg-black/25 border-white/25 bg-black/60 px-3 py-2 text-[10px] sm:text-xs tracking-[0.08em]">
-                <span className="shrink-0 text-amber-100/85">CA:</span>
-                <code className="break-all font-mono text-amber-100/95">{CONTRACT_ADDRESS}</code>
-                <button onClick={copyContractAddress} className="ml-auto shrink-0 rounded bg-amber-300/20 px-2 py-1 text-[9px] uppercase text-amber-200 hover:bg-amber-300/40 sm:text-[10px]">Copy</button>
-              </div>
-
-              <div className="mt-6 flex flex-wrap gap-3 sm:mt-8 sm:gap-4">
-                <a href="#community" className="rounded-full bg-gradient-to-r from-amber-300 to-orange-400 px-5 py-2.5 text-xs font-semibold text-black shadow-[0_0_40px_rgba(255,184,96,0.2)] sm:px-7 sm:py-3 sm:text-sm">Plant Your Flower</a>
-                <a href="#test" className="rounded-full border border-amber-200/50 bg-white/5 px-5 py-2.5 text-xs font-semibold text-amber-50 backdrop-blur-md sm:px-7 sm:py-3 sm:text-sm">Wen Wings?</a>
-              </div>
-
-              <div className="mt-7 flex items-center gap-2 rounded-2xl border border-white/10 bg-black/25 px-3 py-3 text-xl sm:mt-10 sm:gap-3 sm:px-4 sm:py-4 sm:text-3xl">
-                {heroSymbols.map((symbol, idx) => (
-                  <motion.span
-                    key={symbol}
-                    animate={shouldReduceEffects ? { opacity: 1 } : { y: [0, -8, 0], opacity: [0.55, 1, 0.55] }}
-                    transition={shouldReduceEffects ? { duration: 0.2 } : { duration: 2.4, repeat: Infinity, delay: idx * 0.25 }}
-                  >
-                    {symbol}
-                  </motion.span>
-                ))}
-                <span className="ml-1 text-[10px] uppercase tracking-[0.16em] text-amber-100/70 sm:ml-2 sm:text-xs sm:tracking-[0.24em]">Transformation Loop</span>
+              <div className="mt-5 rounded-[1.35rem] border border-white/20 bg-black/60 p-4 backdrop-blur-xl sm:p-5">
+                <p className="text-[10px] uppercase tracking-[0.18em] text-amber-100/88 sm:text-xs">Contract Address</p>
+                <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center">
+                  <code className="min-w-0 flex-1 overflow-x-auto rounded-xl bg-black/65 px-3 py-3 font-mono text-xs text-amber-100/98 sm:text-sm">
+                    {CONTRACT_ADDRESS}
+                  </code>
+                  <button onClick={copyContractAddress} className="action-pill shrink-0 border border-white/30 bg-white/10 text-amber-100">
+                    Copy CA
+                  </button>
+                </div>
               </div>
             </motion.div>
 
             <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 1.1 }}
-              className="relative min-h-[44svh] overflow-hidden rounded-[1.6rem] border border-amber-100/20 bg-black/20 shadow-[0_35px_120px_rgba(0,0,0,0.52)] sm:min-h-[54svh] sm:rounded-[2rem]"
+              initial={{ opacity: 0, scale: 0.94 }}
+              animate={{ opacity: showHeroEvent ? 1 : 0.15, scale: showHeroEvent ? 1 : 0.92 }}
+              transition={{ duration: 1.2 }}
+              className="relative min-h-[52svh] overflow-hidden rounded-[2rem] sm:min-h-[62svh]"
             >
-              <Image
-                src="/images/butterfly-hero.png"
-                alt="Butterfly hero artwork"
-                fill
-                priority
-                sizes="(max-width: 1024px) 100vw, 52vw"
-                className="object-contain object-center drop-shadow-[0_30px_80px_rgba(0,0,0,0.55)]"
-              />
-              <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_36%,rgba(255,210,122,0.25),transparent_24%),linear-gradient(180deg,rgba(7,17,24,0.12),rgba(7,17,24,0.72))]" />
-
-              {heroParticles.map((particle) => (
-                <motion.span
-                  key={particle.id}
-                  className="pointer-events-none absolute text-[10px] uppercase tracking-[0.25em] text-amber-100/65"
-                  style={{ left: `${particle.left}%`, top: `${particle.top}%` }}
-                  animate={shouldReduceEffects ? { opacity: 0.5 } : { y: [0, -14, 0], opacity: [0.15, 0.9, 0.15] }}
-                  transition={shouldReduceEffects ? { duration: 0.2 } : { duration: particle.speed, repeat: Infinity, ease: "easeInOut" }}
-                >
-                  🐛→🦋
-                </motion.span>
-              ))}
+              <div className="butterfly-moon" data-drift="16">
+                <div className="butterfly-moon__halo" />
+                <div className="butterfly-moon__halo butterfly-moon__halo--second" />
+                <Image
+                  src="/images/butterfly-hero.png"
+                  alt="Legendary butterfly"
+                  fill
+                  priority
+                  sizes="(max-width: 1024px) 100vw, 52vw"
+                  className="object-contain object-center drop-shadow-[0_35px_100px_rgba(0,0,0,0.55)]"
+                />
+              </div>
             </motion.div>
           </div>
         </div>
       </section>
 
-      <section id="traders" className="story-panel z-10 px-4">
-        <div className="mx-auto w-[min(1080px,96vw)]">
-          <h2 className="text-center text-3xl sm:text-6xl text-white/95">PICK YOUR FORM</h2>
-          <p className="mt-4 text-center text-xs sm:text-sm uppercase tracking-[0.2em] text-amber-100/90 sm:text-amber-100/75">Paper hands detected. Choose better.</p>
-          <div className="mt-8 grid gap-4 md:grid-cols-3">
-            {traderTypes.map((card) => (
-              <article key={card.title} className="glass-card rounded-3xl p-6 sm:p-6 border-white/25 sm:border-white/15 bg-black/60 sm:bg-black/30">
-                <p className="text-3xl">{card.icon}</p>
-                <h3 className="mt-3 text-2xl sm:text-3xl text-white/95">{card.title}</h3>
-                <ul className="mt-4 space-y-2 text-sm text-amber-100/90 sm:text-amber-50/85">
-                  {card.points.map((point) => (
-                    <li key={point} className="text-amber-50/90 sm:text-amber-50/85">• {point}</li>
-                  ))}
-                </ul>
-              </article>
-            ))}
-          </div>
+      <section id="line-theater" className="story-panel scene-panel z-10 px-4">
+        <div className="scene-shell mx-auto w-[min(1000px,96vw)] text-center">
+          {dramaticLines.map((line, idx) => (
+            <motion.p
+              key={line}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.5 }}
+              transition={{ delay: idx * 0.2, duration: 0.7 }}
+              className="line-theater-text"
+            >
+              {line}
+            </motion.p>
+          ))}
         </div>
       </section>
 
-      <section className="story-panel z-10 px-4">
-        <div className="mx-auto w-[min(1080px,96vw)]">
-          <h2 className="text-center text-3xl sm:text-6xl text-white/95">BEFORE BFLY vs AFTER BFLY</h2>
-          <p className="mt-4 text-center text-xs sm:text-sm uppercase tracking-[0.2em] text-amber-100/90 sm:text-amber-100/75">What transformation looks like in the wild.</p>
-          <div className="mt-8 grid gap-6 md:grid-cols-2">
-            {beforeAfterBFLY.map((item, idx) => (
-              <div key={idx} className="glass-card rounded-2xl border-white/25 bg-black/60 p-6 sm:border-white/15 sm:bg-black/30">
-                <div className="flex flex-col items-center gap-3 text-center sm:flex-row sm:items-start sm:gap-4 sm:text-left">
-                  <div className="flex-1">
-                    <p className="text-[10px] sm:text-xs uppercase tracking-[0.16em] text-red-300/85">Before</p>
-                    <p className="mt-2 text-base sm:text-lg text-amber-50/90">{item.before}</p>
+      <section id="stage-test" className="story-panel scene-panel z-10 px-4">
+        <div className="scene-shell mx-auto w-[min(1080px,96vw)]">
+          <div className="scene-heading text-center">
+            <p className="scene-kicker">First Flight</p>
+            <h2 className="scene-title">WHAT STAGE ARE YOU?</h2>
+          </div>
+
+          <form onSubmit={revealCard} className="mt-8 grid gap-4 lg:grid-cols-[0.85fr,1.15fr]">
+            <div className="glass-card rounded-[2rem] p-5 sm:p-6">
+              <div className="grid gap-3">
+                {(Object.keys(stageCards) as Stage[]).map((stage) => (
+                  <label
+                    key={stage}
+                    className={`rounded-[1.3rem] border p-4 text-left transition ${
+                      selectedStage === stage
+                        ? "border-amber-200/55 bg-amber-200/14"
+                        : "border-white/20 bg-black/35 hover:border-white/30 hover:bg-white/8"
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="stage"
+                      value={stage}
+                      checked={selectedStage === stage}
+                      onChange={() => setSelectedStage(stage)}
+                      className="sr-only"
+                    />
+                    <div className="flex items-center gap-3">
+                      <span className="text-3xl">{stageCards[stage].icon}</span>
+                      <p className="text-xl font-semibold text-white/95">{stage}</p>
+                    </div>
+                  </label>
+                ))}
+              </div>
+
+              <button type="submit" className="action-pill mt-5 w-full bg-gradient-to-r from-amber-300 to-orange-400 text-black">
+                Generate Share Card
+              </button>
+            </div>
+
+            <div className="glass-card rounded-[2rem] p-5 sm:p-6">
+              {!resultCard ? (
+                <div className="screenshot-card flex min-h-[320px] items-center justify-center rounded-[1.5rem] border border-dashed border-white/20 bg-black/35 p-6 text-center">
+                  <p className="max-w-sm text-lg text-amber-50/92">Pick a stage. Generate the card. Screenshot it for X.</p>
+                </div>
+              ) : (
+                <div className="screenshot-card rounded-[1.75rem] border border-white/20 bg-[radial-gradient(circle_at_top,rgba(255,206,126,0.18),transparent_35%),linear-gradient(180deg,rgba(6,15,24,0.85),rgba(4,10,18,0.94))] p-6 sm:p-7">
+                  <p className="text-[10px] uppercase tracking-[0.24em] text-amber-100/88">BFLY Aura Card</p>
+                  <div className="mt-5 flex items-start justify-between gap-4">
+                    <div>
+                      <p className="text-6xl">{resultCard.icon}</p>
+                      <h3 className="mt-3 text-4xl text-white/95">{resultCard.title}</h3>
+                    </div>
+                    <div className="rounded-full border border-white/15 bg-white/5 px-3 py-2 text-[10px] uppercase tracking-[0.18em] text-amber-100/85">
+                      {resultCard.arc}
+                    </div>
                   </div>
-                  <div className="text-xl text-amber-200/95">→</div>
-                  <div className="flex-1">
-                    <p className="text-[10px] sm:text-xs uppercase tracking-[0.16em] text-green-300/85">After</p>
-                    <p className="mt-2 text-base sm:text-lg text-amber-50/90">{item.after}</p>
+
+                  <p className="mt-6 text-xl text-amber-50/94">{resultCard.line}</p>
+                  <p className="mt-3 text-sm uppercase tracking-[0.16em] text-amber-100/82">{resultCard.quote}</p>
+
+                  <div className="mt-8 flex flex-wrap gap-3">
+                    <button onClick={copyResultForX} type="button" className="action-pill border border-white/25 bg-white/8 text-amber-50">
+                      Copy For X
+                    </button>
+                    <button onClick={() => runSwarmAction(swarmActions[1])} type="button" className="action-pill border border-amber-200/30 bg-amber-200/12 text-amber-50">
+                      Grow Wings
+                    </button>
                   </div>
                 </div>
-              </div>
-            ))}
+              )}
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <section id="migration-widget" className="story-panel scene-panel z-10 px-4">
+        <div className="scene-shell mx-auto w-[min(980px,96vw)]">
+          <div className="glass-card rounded-[2rem] p-6 sm:p-8">
+            <p className="scene-kicker">🦋 Migration Season</p>
+            <h2 className="scene-title">Wings Growing...</h2>
+
+            <div className="mt-5 h-4 rounded-full border border-white/25 bg-black/50 p-1">
+              <motion.div
+                className="h-full rounded-full bg-gradient-to-r from-amber-300 via-orange-300 to-cyan-300"
+                animate={{ width: `${statusBar}%` }}
+                transition={{ duration: 0.9 }}
+              />
+            </div>
+
+            <p className="mt-4 text-base text-amber-50/94">{statusMessage}</p>
+            <p className="mt-2 text-sm uppercase tracking-[0.16em] text-amber-100/82">{randomMessages[statusIndex]}</p>
           </div>
         </div>
       </section>
 
-      <section id="cocoon" className="story-panel z-10 px-4">
-        <div className="glass-card cocoon-card mx-auto w-[min(980px,95vw)] overflow-hidden rounded-[2rem] border-white/25 bg-black/60 p-6 sm:border-white/15 sm:bg-black/30 sm:p-12">
-          <p className="text-xs uppercase tracking-[0.32em] text-amber-200/90 sm:text-amber-200/80">THE COCOON</p>
-          <h2 className="mt-3 text-3xl sm:text-6xl text-white/95">The cocoon was bullish.</h2>
-          <h3 className="mt-3 text-2xl sm:text-5xl text-amber-100/90">Migration season is live.</h3>
+      <section id="cocoon" className="story-panel scene-panel scene-panel--cocoon z-10 px-4">
+        <div className="scene-shell glass-card cocoon-card mx-auto w-[min(1080px,96vw)] overflow-hidden rounded-[2rem] p-6 sm:p-10">
+          <div className="scene-heading max-w-2xl">
+            <p className="scene-kicker">THE COCOON</p>
+            <h2 className="scene-title">Everyone thought we disappeared.</h2>
+            <h3 className="mt-2 text-2xl text-amber-100/92 sm:text-4xl">We were transforming.</h3>
+          </div>
 
-          <div className="mt-8 grid gap-8 lg:grid-cols-[1fr,0.9fr]">
-            <p className="max-w-xl text-sm sm:text-base leading-7 sm:leading-8 text-amber-50/90 sm:text-amber-50/88">
-              Sideways chart. Loud community. Wings loading.
-              <br />
-              Wen wings? Right now.
-            </p>
-            <div className="relative min-h-56 rounded-3xl border border-white/25 bg-black/55 p-4 sm:border-white/15 sm:bg-black/25">
+          <div className="mt-8 grid gap-8 lg:grid-cols-[0.9fr,1.1fr] lg:items-center">
+            <div className="relative min-h-[320px] rounded-[1.75rem] border border-white/20 bg-black/45 p-4 sm:min-h-[380px]">
               <div className="cocoon-shell" />
               <motion.span className="crack-line crack-1" animate={shouldReduceEffects ? { scaleY: 0.7 } : { scaleY: [0.2, 1, 0.45] }} transition={shouldReduceEffects ? { duration: 0.2 } : { duration: 2.2, repeat: Infinity }} />
               <motion.span className="crack-line crack-2" animate={shouldReduceEffects ? { scaleY: 0.75 } : { scaleY: [0.3, 1, 0.5] }} transition={shouldReduceEffects ? { duration: 0.2 } : { duration: 2.1, repeat: Infinity, delay: 0.25 }} />
               <motion.span className="crack-line crack-3" animate={shouldReduceEffects ? { scaleY: 0.68 } : { scaleY: [0.25, 1, 0.4] }} transition={shouldReduceEffects ? { duration: 0.2 } : { duration: 2.4, repeat: Infinity, delay: 0.5 }} />
             </div>
+
+            <div className="grid gap-4">
+              {["Particles rising.", "Shell cracking.", "Butterfly emerging."].map((line, idx) => (
+                <div key={line} className="glass-card rounded-[1.5rem] p-5" data-drift={12 + idx * 4}>
+                  <p className="text-lg text-amber-50/94 sm:text-xl">{line}</p>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
-      <section id="swarm" className="story-panel z-10 px-4">
-        <div className="glass-card mx-auto w-[min(1020px,96vw)] rounded-[2rem] border-white/25 bg-black/60 p-6 sm:border-white/15 sm:bg-black/30 sm:p-10">
-          <h2 className="text-3xl sm:text-6xl text-white/95">THE SWARM</h2>
-          <p className="mt-3 text-xs sm:text-sm uppercase tracking-[0.2em] text-amber-100/90 sm:text-amber-100/70">Move fast. Post hard. Hold wings.</p>
+      <section id="swarm" className="story-panel scene-panel z-10 px-4 pb-28">
+        <div className="scene-shell mx-auto w-[min(1100px,96vw)]">
+          <div className="scene-heading text-center">
+            <p className="scene-kicker">THE SWARM</p>
+            <h2 className="scene-title">Movement over noise.</h2>
+          </div>
 
-          <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <div className="rounded-2xl border border-white/25 sm:border-white/10 bg-black/50 sm:bg-black/25 p-4">
-              <p className="text-[10px] sm:text-xs uppercase tracking-[0.22em] text-amber-100/90 sm:text-amber-100/75">🦋 Butterflies Migrated</p>
-              <p className="mt-2 text-2xl sm:text-3xl font-semibold text-white/95">{butterfliesMigrated.toLocaleString()}</p>
+          <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="glass-card scene-card p-6" data-drift="10">
+              <p className="text-[10px] uppercase tracking-[0.2em] text-amber-100/88">🦋 Wings Earned</p>
+              <p className="mt-3 text-4xl font-semibold text-white/96">{wingsEarned.toLocaleString()}</p>
             </div>
-            <div className="rounded-2xl border border-white/25 sm:border-white/10 bg-black/50 sm:bg-black/25 p-4">
-              <p className="text-[10px] sm:text-xs uppercase tracking-[0.22em] text-amber-100/90 sm:text-amber-100/75">🌸 Flowers Planted</p>
-              <p className="mt-2 text-2xl sm:text-3xl font-semibold text-white/95">{flowersPlanted.toLocaleString()}</p>
+            <div className="glass-card scene-card p-6" data-drift="12">
+              <p className="text-[10px] uppercase tracking-[0.2em] text-amber-100/88">🌸 Flowers Planted</p>
+              <p className="mt-3 text-4xl font-semibold text-white/96">{flowersPlanted.toLocaleString()}</p>
             </div>
-            <div className="rounded-2xl border border-white/25 sm:border-white/10 bg-black/50 sm:bg-black/25 p-4">
-              <p className="text-[10px] sm:text-xs uppercase tracking-[0.22em] text-amber-100/90 sm:text-amber-100/75">🌎 Territories Reached</p>
-              <p className="mt-2 text-2xl sm:text-3xl font-semibold text-white/95">{territoriesReached.toLocaleString()}</p>
+            <div className="glass-card scene-card p-6" data-drift="14">
+              <p className="text-[10px] uppercase tracking-[0.2em] text-amber-100/88">🌎 Territories Reached</p>
+              <p className="mt-3 text-4xl font-semibold text-white/96">{territoriesReached.toLocaleString()}</p>
             </div>
-            <div className="rounded-2xl border border-white/25 sm:border-white/10 bg-black/50 sm:bg-black/25 p-4">
-              <p className="text-[10px] sm:text-xs uppercase tracking-[0.22em] text-amber-100/90 sm:text-amber-100/75">⚡ Metamorphosis Events</p>
-              <p className="mt-2 text-2xl sm:text-3xl font-semibold text-white/95">{metamorphosisEvents.toLocaleString()}</p>
+            <div className="glass-card scene-card p-6" data-drift="16">
+              <p className="text-[10px] uppercase tracking-[0.2em] text-amber-100/88">⚡ Transformations Completed</p>
+              <p className="mt-3 text-4xl font-semibold text-white/96">{transformationsCompleted.toLocaleString()}</p>
             </div>
           </div>
 
-          <div className="mt-7 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-7 grid gap-3 sm:grid-cols-3">
             {swarmActions.map((action) => (
               <button
                 key={action.label}
                 onClick={() => runSwarmAction(action)}
-                className="rounded-2xl border border-amber-200/40 sm:border-amber-200/30 bg-amber-200/15 sm:bg-amber-200/10 px-4 py-4 text-left text-xs uppercase tracking-[0.15em] text-amber-50/95 sm:text-amber-50 transition hover:-translate-y-1 hover:bg-amber-200/25 sm:hover:bg-amber-200/20"
+                className="action-pill border border-white/28 bg-black/42 text-amber-50"
               >
                 {action.label}
               </button>
@@ -614,150 +679,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
-      <section id="test" className="story-panel z-10 px-4">
-        <div className="glass-card mx-auto w-[min(1000px,95vw)] rounded-[2rem] border-white/25 bg-black/60 p-6 sm:border-white/15 sm:bg-black/30 sm:p-10">
-          <div className="flex flex-col gap-4 text-center sm:flex-row sm:items-center sm:justify-between sm:text-left">
-            <div>
-              <h2 className="text-3xl sm:text-6xl text-white/95">WEN WINGS TEST</h2>
-              <p className="mt-3 text-xs sm:text-sm uppercase tracking-[0.2em] text-amber-100/90 sm:text-amber-100/70">3 taps. Know your form.</p>
-            </div>
-            <div className="mx-auto flex w-full max-w-[240px] items-center justify-center gap-3 rounded-2xl border border-white/30 bg-black/70 px-4 py-3 text-sm sm:mx-0 sm:max-w-none sm:w-auto sm:justify-start sm:border-white/15 sm:bg-black/40 sm:text-base">
-              <span className="text-lg sm:text-2xl">{migrationEmojis[migrationStatusIndex]}</span>
-              <span className="text-amber-100/90">{migrationLabels[migrationStatusIndex]}</span>
-            </div>
-          </div>
-
-          <form onSubmit={evaluateQuiz} className="mt-7 grid gap-4 sm:grid-cols-3">
-            <label className="rounded-2xl border border-white/30 bg-black/65 p-4 text-xs text-amber-50/95 sm:border-white/10 sm:bg-black/20 sm:text-sm sm:text-amber-50/90">
-              <span>How many rugs survived?</span>
-              <select value={rugsSurvived} onChange={(event) => setRugsSurvived(event.target.value)} className="mt-3 w-full rounded-xl border border-white/30 bg-black/75 px-3 py-2 text-amber-50/95 sm:border-white/20 sm:bg-black/40">
-                <option value="0">0</option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3+</option>
-              </select>
-            </label>
-            <label className="rounded-2xl border border-white/30 bg-black/65 p-4 text-xs text-amber-50/95 sm:border-white/10 sm:bg-black/20 sm:text-sm sm:text-amber-50/90">
-              <span>How many times bought the top?</span>
-              <select value={topsBought} onChange={(event) => setTopsBought(event.target.value)} className="mt-3 w-full rounded-xl border border-white/30 bg-black/75 px-3 py-2 text-amber-50/95 sm:border-white/20 sm:bg-black/40">
-                <option value="0">0</option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3+</option>
-              </select>
-            </label>
-            <label className="rounded-2xl border border-white/30 bg-black/65 p-4 text-xs text-amber-50/95 sm:border-white/10 sm:bg-black/20 sm:text-sm sm:text-amber-50/90">
-              <span>How many times panic sold?</span>
-              <select value={panicSells} onChange={(event) => setPanicSells(event.target.value)} className="mt-3 w-full rounded-xl border border-white/30 bg-black/75 px-3 py-2 text-amber-50/95 sm:border-white/20 sm:bg-black/40">
-                <option value="0">0</option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3+</option>
-              </select>
-            </label>
-
-            <button type="submit" className="sm:col-span-3 rounded-2xl bg-gradient-to-r from-amber-300 to-orange-400 px-6 py-3 text-xs sm:text-sm font-semibold text-black">
-              Reveal Form
-            </button>
-          </form>
-
-          <div className="mt-6 rounded-2xl border border-white/30 bg-black/65 p-6 sm:border-white/15 sm:bg-black/30">
-            {!quizResult ? (
-              <p className="text-amber-50/90 text-sm">Tap answers. Reveal your meme form.</p>
-            ) : (
-              <>
-                <p className="text-[10px] sm:text-xs uppercase tracking-[0.24em] text-amber-100/85 sm:text-amber-100/75">Result</p>
-                <h3 className="mt-2 text-3xl sm:text-4xl text-white/95">{quizResult.title}</h3>
-                <p className="mt-3 text-sm sm:text-base text-amber-50/90">{quizResult.copy}</p>
-                <p className="mt-2 text-base sm:text-lg text-amber-200">{quizResult.chant}</p>
-                <div className="mt-5 flex flex-wrap gap-3">
-                  <button onClick={copyResultForX} className="rounded-full border border-amber-200/50 sm:border-amber-200/40 bg-amber-200/15 sm:bg-amber-200/10 px-4 py-2 text-[10px] uppercase tracking-[0.14em] text-amber-100/95 sm:px-5 sm:text-xs sm:tracking-[0.2em]">
-                    Copy Result For X
-                  </button>
-                  <p className="self-center text-[10px] uppercase tracking-[0.14em] text-amber-100/85 sm:text-amber-100/70 sm:text-xs sm:tracking-[0.2em]">Post it. Dogs bark. Butterflies fly.</p>
-                </div>
-              </>
-            )}
-          </div>
-        </div>
-      </section>
-
-      <section id="migration" className="story-panel z-10 px-4">
-        <div className="mx-auto w-[min(1000px,95vw)]">
-          <h2 className="text-center text-3xl sm:text-6xl text-white/95">MIGRATION SEASON</h2>
-          <p className="mt-3 text-center text-xs sm:text-sm uppercase tracking-[0.2em] text-amber-100/90 sm:text-amber-100/70">No roadmap essays. Just movement.</p>
-
-          <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {migrationStages.map((stage, idx) => (
-              <div key={stage} className="glass-card rounded-2xl p-5 border-white/25 sm:border-white/15 bg-black/60 sm:bg-black/30">
-                <p className="text-[10px] sm:text-xs uppercase tracking-[0.24em] text-amber-100/90 sm:text-amber-100/75">Stage {idx + 1}</p>
-                <p className="mt-2 text-xl sm:text-2xl text-white/95">{stage}</p>
-                <p className="mt-2 text-sm text-amber-50/85">🐛 → 🦋</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section id="community" className="story-panel z-10 px-4 pb-24">
-        <div className="glass-card mx-auto w-[min(1040px,96vw)] rounded-[2rem] border-white/25 bg-black/60 p-6 sm:border-white/15 sm:bg-black/30 sm:p-10">
-          <h2 className="text-3xl sm:text-6xl text-white/95">COMMUNITY WALL</h2>
-          <p className="mt-3 max-w-2xl text-xs sm:text-sm uppercase tracking-[0.2em] text-amber-100/90 sm:text-amber-100/70">Plant Your Flower. Join the movement.</p>
-
-          <form onSubmit={plantMessage} className="mt-6 grid gap-3 sm:grid-cols-[1fr,1fr,auto]">
-            <input
-              value={name}
-              onChange={(event) => setName(event.target.value)}
-              placeholder="X handle or name"
-              className="rounded-2xl border border-white/35 bg-black/70 px-4 py-3 text-xs text-amber-50/95 placeholder:text-amber-100/70 focus:border-amber-200 focus:outline-none sm:border-white/25 sm:bg-black/20 sm:text-sm sm:placeholder:text-amber-100/50"
-            />
-            <input
-              value={message}
-              onChange={(event) => setMessage(event.target.value)}
-              placeholder="Drop your swarm message"
-              className="rounded-2xl border border-white/35 bg-black/70 px-4 py-3 text-xs text-amber-50/95 placeholder:text-amber-100/70 focus:border-amber-200 focus:outline-none sm:border-white/25 sm:bg-black/20 sm:text-sm sm:placeholder:text-amber-100/50"
-            />
-            <button className="rounded-2xl bg-gradient-to-r from-amber-300 to-orange-300 px-4 sm:px-5 py-3 text-xs sm:text-sm font-semibold text-black/95 whitespace-nowrap">
-              Plant
-            </button>
-          </form>
-
-          <div className="garden-plot mt-6" style={{ minHeight: `${gardenHeight}px` }}>
-            {wallFlowers.map((flower, idx) => (
-              <motion.button
-                key={flower.id}
-                type="button"
-                whileHover={isPhone ? undefined : { scale: 1.16, y: -8 }}
-                animate={shouldReduceEffects ? { y: 0, rotate: 0 } : { y: [0, -4, 0], rotate: [0, 2, -2, 0] }}
-                transition={shouldReduceEffects ? { duration: 0.2 } : { duration: 4 + (idx % 4), repeat: Infinity, ease: "easeInOut" }}
-                className="flower"
-                style={{ left: `${flower.x}%`, top: `${flower.y}%`, color: flower.color, width: 28, height: 28 }}
-                title={`${flower.name}: ${flower.message}`}
-              >
-                <span className="flower-center" />
-              </motion.button>
-            ))}
-          </div>
-
-          <div className="mt-5 grid gap-2 text-[11px] sm:text-sm text-amber-50/90 sm:text-amber-100/85 sm:grid-cols-2">
-            {wallFlowers.slice(0, 8).map((flower) => (
-              <p key={`wall-${flower.id}`} className="break-words">
-                <span className="font-semibold text-amber-200">{flower.name}:</span> {flower.message}
-              </p>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <div className="fixed inset-x-0 bottom-0 z-[60] border-t border-white/20 bg-black/85 px-2 py-2 backdrop-blur-lg md:hidden">
-        <div className="grid grid-cols-4 gap-2">
-          <a href="https://jup.ag" target="_blank" rel="noreferrer" className="rounded-xl bg-amber-300 px-2 py-2 text-center text-[10px] font-bold uppercase tracking-[0.1em] text-black hover:bg-amber-400">Buy</a>
-          <button onClick={copyContractAddress} className="rounded-xl border border-white/30 bg-white/8 px-2 py-2 text-[10px] font-semibold uppercase tracking-[0.1em] text-amber-100/95 hover:bg-white/15">CA</button>
-          <a href="https://x.com" target="_blank" rel="noreferrer" className="rounded-xl border border-white/30 bg-white/8 px-2 py-2 text-center text-[10px] font-semibold uppercase tracking-[0.1em] text-amber-100/95 hover:bg-white/15">X</a>
-          <a href="https://t.me" target="_blank" rel="noreferrer" className="rounded-xl border border-white/30 bg-white/8 px-2 py-2 text-center text-[10px] font-semibold uppercase tracking-[0.1em] text-amber-100/95 hover:bg-white/15">TG</a>
-        </div>
-      </div>
     </main>
   );
 }
