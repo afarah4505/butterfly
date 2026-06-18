@@ -1,684 +1,366 @@
 "use client";
 
-import { FormEvent, useEffect, useMemo, useState } from "react";
-import Image from "next/image";
-import { motion, useMotionValueEvent, useScroll } from "framer-motion";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import Lenis from "lenis";
-import ThreeBackdrop from "@/components/ThreeBackdrop";
+import { useEffect, useMemo, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
-gsap.registerPlugin(ScrollTrigger);
-
-type Stage = "Caterpillar" | "Cocoon" | "Butterfly" | "Migration Leader";
-
-type ResultCard = {
+type Stage = {
   icon: string;
-  title: Stage;
+  title: string;
   line: string;
-  arc: string;
   quote: string;
 };
 
-const CONTRACT_ADDRESS = "0xBFLYBFLYBFLYBFLYBFLYBFLYBFLYBFLYBFLY";
-
-const randomMessages = [
-  "Paper hands detected.",
-  "Migration season approaching.",
-  "The cocoon was bullish.",
-  "Butterfly spotted.",
-  "Wen wings?",
-];
-
-const statusMessages = [
-  "Wings Growing...",
-  "Cocoon Holding...",
-  "Transformation Active...",
-  "Migration Season...",
-];
-
-const dramaticLines = ["Dogs bark.", "Cats meow.", "Frogs croak.", "Butterflies migrate."];
-
-const stageCards: Record<Stage, ResultCard> = {
-  Caterpillar: {
+const stages: Stage[] = [
+  {
     icon: "🐛",
     title: "Caterpillar",
-    line: "Still crawling through fear candles.",
-    arc: "Forest Floor Arc",
-    quote: "Not everyone gets wings.",
+    line: "Still crawling through red candles.",
+    quote: "Everyone starts here.",
   },
-  Cocoon: {
+  {
     icon: "🥚",
     title: "Cocoon",
     line: "Silent. Hidden. Loading transformation.",
-    arc: "Cocoon Chamber Arc",
     quote: "The cocoon was bullish.",
   },
-  Butterfly: {
+  {
     icon: "🦋",
     title: "Butterfly",
     line: "You stopped chasing. You started flying.",
-    arc: "First Flight Arc",
-    quote: "Wen wings? Right now.",
+    quote: "Not everyone gets wings.",
   },
-  "Migration Leader": {
+  {
     icon: "👑",
     title: "Migration Leader",
-    line: "Timeline commander. Migration signal source.",
-    arc: "Migration Season Arc",
-    quote: "Butterfly spotted.",
+    line: "You do not follow the swarm. You move it.",
+    quote: "Migration season starts with you.",
   },
-};
+];
 
-const swarmActions = [
-  { label: "Join The Swarm", wings: 640, transforms: 2 },
-  { label: "Grow Wings", wings: 920, transforms: 3 },
-  { label: "Begin Migration", wings: 1400, transforms: 4 },
+const messages = [
+  "Paper hands detected.",
+  "Wings loading...",
+  "The cocoon was bullish.",
+  "Butterfly spotted.",
+  "Migration season approaching.",
+  "Wen wings?",
 ];
 
 export default function Home() {
-  const { scrollYProgress } = useScroll();
-  const [nightMix, setNightMix] = useState(0.1);
-  const [isPhone, setIsPhone] = useState(false);
-  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+  const [selected, setSelected] = useState<Stage | null>(null);
+  const [messageIndex, setMessageIndex] = useState(0);
 
-  const [showHeroEvent, setShowHeroEvent] = useState(false);
-  const [easterEgg, setEasterEgg] = useState(randomMessages[0]);
-  const [showEgg, setShowEgg] = useState(false);
-
-  const [statusIndex, setStatusIndex] = useState(0);
-  const [statusMessage, setStatusMessage] = useState(statusMessages[0]);
-  const [statusBar, setStatusBar] = useState(82);
-
-  const [selectedStage, setSelectedStage] = useState<Stage>("Cocoon");
-  const [resultCard, setResultCard] = useState<ResultCard | null>(null);
-
-  const [wingsEarned, setWingsEarned] = useState(12841);
-  const [flowersPlanted, setFlowersPlanted] = useState(4112);
-  const [territoriesReached, setTerritoriesReached] = useState(73);
-  const [transformationsCompleted, setTransformationsCompleted] = useState(8927);
-
-  const shouldReduceEffects = isPhone || prefersReducedMotion;
-
-  const pollenSprites = useMemo(
+  const particles = useMemo(
     () =>
-      Array.from({ length: shouldReduceEffects ? 10 : 24 }, (_, idx) => ({
-        id: idx,
-        left: Math.random() * 100,
-        top: 58 + Math.random() * 38,
-        duration: 6 + Math.random() * 6,
-        delay: idx * -0.7,
-      })),
-    [shouldReduceEffects]
-  );
-
-  const petalSprites = useMemo(
-    () =>
-      Array.from({ length: shouldReduceEffects ? 8 : 18 }, (_, idx) => ({
-        id: idx,
-        left: 2 + Math.random() * 96,
-        duration: 9 + Math.random() * 9,
-        delay: idx * -1.2,
-      })),
-    [shouldReduceEffects]
-  );
-
-  const fireflies = useMemo(
-    () =>
-      Array.from({ length: shouldReduceEffects ? 10 : 26 }, (_, idx) => ({
-        id: idx,
+      Array.from({ length: 34 }, (_, i) => ({
+        id: i,
         left: Math.random() * 100,
         top: Math.random() * 100,
-        duration: 4 + Math.random() * 5,
-        delay: idx * -0.45,
+        delay: Math.random() * 8,
+        duration: 8 + Math.random() * 10,
       })),
-    [shouldReduceEffects]
-  );
-
-  const skyButterflies = useMemo(
-    () =>
-      Array.from({ length: shouldReduceEffects ? 3 : 8 }, (_, idx) => ({
-        id: idx,
-        top: 8 + Math.random() * 62,
-        duration: 16 + Math.random() * 18,
-        delay: idx * -4.5,
-      })),
-    [shouldReduceEffects]
+    []
   );
 
   useEffect(() => {
-    const phoneQuery = window.matchMedia("(max-width: 767px)");
-    const reducedMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const timer = setInterval(() => {
+      setMessageIndex((current) => (current + 1) % messages.length);
+    }, 4200);
 
-    const applyPreferences = () => {
-      setIsPhone(phoneQuery.matches);
-      setPrefersReducedMotion(reducedMotionQuery.matches);
-    };
-
-    applyPreferences();
-    phoneQuery.addEventListener("change", applyPreferences);
-    reducedMotionQuery.addEventListener("change", applyPreferences);
-
-    return () => {
-      phoneQuery.removeEventListener("change", applyPreferences);
-      reducedMotionQuery.removeEventListener("change", applyPreferences);
-    };
+    return () => clearInterval(timer);
   }, []);
-
-  useEffect(() => {
-    const intro = window.setTimeout(() => {
-      setShowHeroEvent(true);
-      setShowEgg(true);
-      setEasterEgg("Butterfly spotted.");
-      window.setTimeout(() => setShowEgg(false), 2500);
-    }, 1100);
-    return () => window.clearTimeout(intro);
-  }, []);
-
-  useEffect(() => {
-    const timer = window.setInterval(() => {
-      const nextStatus = (statusIndex + 1) % statusMessages.length;
-      const nextBar = 62 + Math.floor(Math.random() * 35);
-      const nextEgg = randomMessages[Math.floor(Math.random() * randomMessages.length)];
-      setStatusIndex(nextStatus);
-      setStatusMessage(statusMessages[nextStatus]);
-      setStatusBar(nextBar);
-      setEasterEgg(nextEgg);
-      setShowEgg(true);
-      window.setTimeout(() => setShowEgg(false), 2300);
-    }, 9000);
-
-    return () => window.clearInterval(timer);
-  }, [statusIndex]);
-
-  useEffect(() => {
-    if (shouldReduceEffects) {
-      return;
-    }
-
-    const lenis = new Lenis({
-      duration: 1.02,
-      smoothWheel: true,
-      wheelMultiplier: 0.88,
-      touchMultiplier: 1.05,
-    });
-
-    let frame = 0;
-    const raf = (time: number) => {
-      lenis.raf(time);
-      frame = requestAnimationFrame(raf);
-    };
-    frame = requestAnimationFrame(raf);
-
-    return () => {
-      cancelAnimationFrame(frame);
-      lenis.destroy();
-    };
-  }, [shouldReduceEffects]);
-
-  useEffect(() => {
-    if (shouldReduceEffects) {
-      return;
-    }
-
-    const sections = gsap.utils.toArray<HTMLElement>(".story-panel");
-    const drifts = gsap.utils.toArray<HTMLElement>("[data-drift]");
-
-    sections.forEach((section) => {
-      gsap.fromTo(
-        section,
-        { autoAlpha: 0.25, y: 70 },
-        {
-          autoAlpha: 1,
-          y: 0,
-          duration: 1,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: section,
-            start: "top 80%",
-            end: "bottom 20%",
-            scrub: 0.35,
-          },
-        }
-      );
-    });
-
-    drifts.forEach((node) => {
-      const amount = Number(node.dataset.drift ?? 12);
-      gsap.fromTo(
-        node,
-        { yPercent: amount * -0.35 },
-        {
-          yPercent: amount,
-          ease: "none",
-          scrollTrigger: {
-            trigger: node.closest("section") ?? node,
-            start: "top bottom",
-            end: "bottom top",
-            scrub: true,
-          },
-        }
-      );
-    });
-
-    return () => {
-      ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
-    };
-  }, [shouldReduceEffects]);
-
-  useMotionValueEvent(scrollYProgress, "change", (value) => {
-    const now = new Date();
-    const hour = now.getHours() + now.getMinutes() / 60;
-    const circadian = (Math.sin((hour / 24) * Math.PI * 2 - Math.PI / 2) + 1) / 2;
-    const blend = Math.min(1, Math.max(0, 0.38 * value + (1 - circadian) * 0.62));
-    setNightMix(blend);
-    document.documentElement.style.setProperty("--blend", blend.toFixed(3));
-  });
-
-  const runSwarmAction = (action: (typeof swarmActions)[number]) => {
-    setWingsEarned((v) => v + action.wings);
-    setTransformationsCompleted((v) => v + action.transforms);
-    setFlowersPlanted((v) => v + Math.floor(action.wings / 20));
-    setTerritoriesReached((v) => v + 1);
-  };
-
-  const revealCard = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const card = stageCards[selectedStage];
-    setResultCard(card);
-    setWingsEarned((v) => v + 555);
-    setTransformationsCompleted((v) => v + 3);
-  };
-
-  const copyResultForX = async () => {
-    if (!resultCard) {
-      return;
-    }
-
-    const text = `I am ${resultCard.icon} ${resultCard.title} in the BFLY metamorphosis. ${resultCard.line} ${resultCard.quote} #BFLY`;
-    try {
-      await navigator.clipboard.writeText(text);
-      setEasterEgg("Migration season approaching.");
-      setShowEgg(true);
-      window.setTimeout(() => setShowEgg(false), 2000);
-    } catch {
-      setEasterEgg("Paper hands detected.");
-      setShowEgg(true);
-      window.setTimeout(() => setShowEgg(false), 2000);
-    }
-  };
-
-  const copyContractAddress = async () => {
-    try {
-      await navigator.clipboard.writeText(CONTRACT_ADDRESS);
-      setEasterEgg("Contract copied. Wings loading...");
-      setShowEgg(true);
-      window.setTimeout(() => setShowEgg(false), 2000);
-    } catch {
-      setEasterEgg("Paper hands detected.");
-      setShowEgg(true);
-      window.setTimeout(() => setShowEgg(false), 2000);
-    }
-  };
 
   return (
-    <main className="relative min-h-screen overflow-x-clip snap-none md:snap-y md:snap-mandatory">
-      <ThreeBackdrop nightMix={nightMix} reduceEffects={shouldReduceEffects} />
-      <div className="sun-rays" />
-      <div className="mist-overlay" />
+    <main className="min-h-screen overflow-x-hidden bg-[#030711] text-white">
+      <div className="fixed inset-0 -z-10 bg-[radial-gradient(circle_at_50%_10%,rgba(255,187,84,0.25),transparent_28%),radial-gradient(circle_at_20%_80%,rgba(57,255,188,0.12),transparent_25%),linear-gradient(180deg,#030711,#07131c_45%,#02040a)]" />
 
-      <div className="fixed inset-0 z-[2] pointer-events-none overflow-hidden">
-        {pollenSprites.map((item) => (
-          <span
-            key={`p-${item.id}`}
-            className="pollen-drift"
-            style={{
-              left: `${item.left}%`,
-              top: `${item.top}%`,
-              animationDuration: `${item.duration}s`,
-              animationDelay: `${item.delay}s`,
-            }}
-          />
-        ))}
+      {particles.map((p) => (
+        <motion.span
+          key={p.id}
+          className="pointer-events-none fixed z-0 h-1.5 w-1.5 rounded-full bg-amber-200/70 shadow-[0_0_18px_rgba(251,191,36,0.9)]"
+          style={{ left: `${p.left}%`, top: `${p.top}%` }}
+          animate={{ y: [-20, -120], opacity: [0, 1, 0] }}
+          transition={{
+            duration: p.duration,
+            delay: p.delay,
+            repeat: Infinity,
+            ease: "linear",
+          }}
+        />
+      ))}
 
-        {petalSprites.map((item) => (
-          <span
-            key={`pt-${item.id}`}
-            className="petal"
-            style={{
-              left: `${item.left}%`,
-              animationDuration: `${item.duration}s`,
-              animationDelay: `${item.delay}s`,
-            }}
-          />
-        ))}
+      <MigrationToast text={messages[messageIndex]} />
 
-        {fireflies.map((item) => (
-          <motion.span
-            key={`f-${item.id}`}
-            className="firefly"
-            style={{ left: `${item.left}%`, top: `${item.top}%` }}
-            animate={
-              shouldReduceEffects
-                ? { opacity: 0.55, scale: 1 }
-                : { opacity: [0.1, 0.95, 0.2], scale: [0.7, 1.15, 0.85], y: [0, -10, 0] }
-            }
-            transition={
-              shouldReduceEffects
-                ? { duration: 0.2 }
-                : { duration: item.duration, repeat: Infinity, ease: "easeInOut", delay: item.delay }
-            }
-          />
-        ))}
+      <header className="fixed left-0 right-0 top-0 z-50 border-b border-white/10 bg-black/45 backdrop-blur-xl">
+        <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4">
+          <a href="#hero" className="text-lg font-black tracking-[0.28em]">
+            BFLY
+          </a>
 
-        {skyButterflies.map((item) => (
-          <motion.span
-            key={`b-${item.id}`}
-            className="sky-butterfly text-lg"
-            style={{ top: `${item.top}%` }}
-            animate={
-              shouldReduceEffects
-                ? { opacity: 0.2, x: 0 }
-                : { x: ["-10vw", "110vw"], opacity: [0, 0.75, 0.2, 0] }
-            }
-            transition={
-              shouldReduceEffects
-                ? { duration: 0.2 }
-                : { duration: item.duration, repeat: Infinity, ease: "linear", delay: item.delay }
-            }
-          >
-            🦋
-          </motion.span>
-        ))}
-      </div>
-
-      <div className="forest-parallax fixed inset-0 z-[0]">
-        <div className="forest-layer layer-1" />
-        <div className="forest-layer layer-2" />
-        <div className="forest-layer layer-3" />
-      </div>
-
-      <motion.div
-        className="fixed left-0 top-0 z-[40] h-1 bg-gradient-to-r from-amber-300 via-orange-300 to-cyan-300"
-        style={{ scaleX: scrollYProgress, transformOrigin: "0%" }}
-      />
-
-      <motion.div
-        initial={{ opacity: 0, y: -14 }}
-        animate={{ opacity: showEgg ? 1 : 0, y: showEgg ? 0 : -14 }}
-        className="fixed right-3 top-4 z-[45] max-w-[72vw] rounded-full border border-amber-100/40 bg-black/65 px-3 py-2 text-[10px] uppercase tracking-[0.2em] text-amber-100 backdrop-blur-xl sm:right-5 sm:top-6 sm:max-w-none sm:px-4 sm:text-xs"
-      >
-        {easterEgg}
-      </motion.div>
-
-      <motion.div
-        initial={{ opacity: 0, y: 18 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="status-widget fixed bottom-20 left-3 z-[44] w-[188px] rounded-2xl border border-white/22 bg-black/65 p-3 backdrop-blur-xl sm:bottom-6 sm:left-auto sm:right-5 sm:w-[220px]"
-      >
-        <p className="text-[10px] uppercase tracking-[0.22em] text-amber-100/86">🦋 Migration Season</p>
-        <p className="mt-2 text-sm font-semibold text-white/96">Wings Growing...</p>
-        <div className="mt-3 h-2.5 overflow-hidden rounded-full border border-white/25 bg-black/50">
-          <motion.div
-            className="h-full bg-gradient-to-r from-amber-300 via-orange-300 to-cyan-300"
-            animate={{ width: `${statusBar}%` }}
-            transition={{ duration: 1.1, ease: "easeOut" }}
-          />
-        </div>
-        <p className="mt-2 text-[11px] text-amber-100/84">{randomMessages[statusIndex]}</p>
-      </motion.div>
-
-      <section id="home" className="relative z-10 min-h-screen overflow-hidden px-4 pb-12 pt-4 sm:px-8 sm:pb-16 sm:pt-6 lg:px-12 scroll-mt-20 md:scroll-mt-24 md:snap-start">
-        <div className="absolute inset-0 bg-[#050b10]" />
-
-        <div className="relative z-20 mx-auto flex min-h-[90svh] max-w-7xl flex-col">
-          <nav className="mb-6 flex items-center justify-between rounded-full border border-white/10 bg-black/25 px-4 py-3 backdrop-blur-xl sm:mb-8">
-            <a href="#home" className="text-[10px] font-semibold uppercase tracking-[0.24em] text-amber-100 sm:text-xs sm:tracking-[0.3em]">
-              BFLY Metamorphosis
+          <div className="hidden items-center gap-6 text-xs font-bold uppercase tracking-[0.22em] text-white/70 md:flex">
+            <a href="#spotted" className="hover:text-amber-200">
+              Spotted
             </a>
-            <div className="hidden items-center gap-5 text-[11px] uppercase tracking-[0.22em] text-amber-50/75 md:flex">
-              <a href="#line-theater" className="transition hover:text-amber-100">Ritual</a>
-              <a href="#stage-test" className="transition hover:text-amber-100">Stage</a>
-              <a href="#migration-widget" className="transition hover:text-amber-100">Status</a>
-              <a href="#cocoon" className="transition hover:text-amber-100">Cocoon</a>
-              <a href="#swarm" className="transition hover:text-amber-100">Swarm</a>
-            </div>
-          </nav>
-
-          <div className="grid flex-1 items-center gap-10 lg:grid-cols-[0.95fr,1.05fr]">
-            <motion.div initial={{ opacity: 0, y: 22 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9 }}>
-              <p className="text-[10px] uppercase tracking-[0.3em] text-amber-200/90 sm:text-xs">🐛 → 🥚 → ⚡ → 🦋</p>
-              <h1 className="mt-4 text-5xl font-bold leading-[0.88] text-white sm:mt-6 sm:text-7xl lg:text-[6.1rem]">
-                THE BUTTERFLY
-                <br />
-                HAS BEEN SPOTTED.
-              </h1>
-              <p className="mt-4 text-xl text-amber-50/92 sm:mt-5 sm:text-2xl">Not everyone gets wings.</p>
-
-              <div className="mt-6 grid gap-3 sm:grid-cols-2">
-                <button onClick={() => runSwarmAction(swarmActions[0])} className="action-pill bg-gradient-to-r from-amber-300 to-orange-400 text-black">
-                  JOIN THE SWARM
-                </button>
-                <button onClick={() => runSwarmAction(swarmActions[2])} className="action-pill border border-white/25 bg-black/45 text-amber-50">
-                  BEGIN MIGRATION
-                </button>
-              </div>
-
-              <div className="mt-5 rounded-[1.35rem] border border-white/20 bg-black/60 p-4 backdrop-blur-xl sm:p-5">
-                <p className="text-[10px] uppercase tracking-[0.18em] text-amber-100/88 sm:text-xs">Contract Address</p>
-                <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center">
-                  <code className="min-w-0 flex-1 overflow-x-auto rounded-xl bg-black/65 px-3 py-3 font-mono text-xs text-amber-100/98 sm:text-sm">
-                    {CONTRACT_ADDRESS}
-                  </code>
-                  <button onClick={copyContractAddress} className="action-pill shrink-0 border border-white/30 bg-white/10 text-amber-100">
-                    Copy CA
-                  </button>
-                </div>
-              </div>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, scale: 0.94 }}
-              animate={{ opacity: showHeroEvent ? 1 : 0.15, scale: showHeroEvent ? 1 : 0.92 }}
-              transition={{ duration: 1.2 }}
-              className="relative min-h-[52svh] overflow-hidden rounded-[2rem] sm:min-h-[62svh]"
-            >
-              <div className="butterfly-moon" data-drift="16">
-                <div className="butterfly-moon__halo" />
-                <div className="butterfly-moon__halo butterfly-moon__halo--second" />
-                <Image
-                  src="/images/butterfly-hero.png"
-                  alt="Legendary butterfly"
-                  fill
-                  priority
-                  sizes="(max-width: 1024px) 100vw, 52vw"
-                  className="object-contain object-center drop-shadow-[0_35px_100px_rgba(0,0,0,0.55)]"
-                />
-              </div>
-            </motion.div>
+            <a href="#stage" className="hover:text-amber-200">
+              Stage
+            </a>
+            <a href="#cocoon" className="hover:text-amber-200">
+              Cocoon
+            </a>
+            <a href="#swarm" className="hover:text-amber-200">
+              Swarm
+            </a>
           </div>
-        </div>
+
+          <a
+            href="#swarm"
+            className="rounded-full border border-amber-300/50 bg-amber-300 px-4 py-2 text-xs font-black uppercase tracking-widest text-black shadow-[0_0_24px_rgba(251,191,36,0.35)]"
+          >
+            Join
+          </a>
+        </nav>
+      </header>
+
+      <section
+        id="hero"
+        className="relative flex min-h-screen flex-col items-center justify-center px-4 pb-24 pt-32 text-center"
+      >
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8, y: 30 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          transition={{ duration: 1.2, ease: "easeOut" }}
+          className="relative"
+        >
+          <div className="absolute inset-0 rounded-full bg-amber-300/30 blur-[90px]" />
+          <div className="relative text-[8rem] leading-none md:text-[14rem]">
+            🦋
+          </div>
+        </motion.div>
+
+        <motion.p
+          initial={{ opacity: 0, y: 18 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+          className="mt-8 text-xs font-black uppercase tracking-[0.38em] text-amber-200"
+        >
+          The Butterfly Has Been Spotted
+        </motion.p>
+
+        <motion.h1
+          initial={{ opacity: 0, y: 26 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6 }}
+          className="mt-5 max-w-5xl text-5xl font-black uppercase leading-[0.88] tracking-tight md:text-8xl"
+        >
+          Not Everyone
+          <br />
+          Gets Wings.
+        </motion.h1>
+
+        <motion.p
+          initial={{ opacity: 0, y: 26 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.8 }}
+          className="mt-6 max-w-xl text-lg font-medium text-white/85 md:text-xl"
+        >
+          Every trader starts as a caterpillar. A few survive the cocoon.
+          Welcome to the Butterfly Effect.
+        </motion.p>
+
+        <motion.div
+          initial={{ opacity: 0, y: 26 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1 }}
+          className="mt-9 flex flex-col gap-3 sm:flex-row"
+        >
+          <a
+            href="#stage"
+            className="rounded-full bg-white px-7 py-4 text-sm font-black uppercase tracking-widest text-black"
+          >
+            Begin Migration
+          </a>
+          <a
+            href="#swarm"
+            className="rounded-full border border-white/25 bg-white/10 px-7 py-4 text-sm font-black uppercase tracking-widest text-white backdrop-blur"
+          >
+            Join The Swarm
+          </a>
+        </motion.div>
+
+        <p className="absolute bottom-8 text-3xl">🐛 → 🥚 → ⚡ → 🦋</p>
       </section>
 
-      <section id="line-theater" className="story-panel scene-panel z-10 px-4 scroll-mt-20 md:scroll-mt-24 md:snap-start">
-        <div className="scene-shell mx-auto w-[min(1000px,96vw)] text-center">
-          {dramaticLines.map((line, idx) => (
-            <motion.p
-              key={line}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.5 }}
-              transition={{ delay: idx * 0.2, duration: 0.7 }}
-              className="line-theater-text"
-            >
-              {line}
-            </motion.p>
-          ))}
-        </div>
-      </section>
-
-      <section id="stage-test" className="story-panel scene-panel z-10 px-4 scroll-mt-20 md:scroll-mt-24 md:snap-start">
-        <div className="scene-shell mx-auto w-[min(1080px,96vw)]">
-          <div className="scene-heading text-center">
-            <p className="scene-kicker">First Flight</p>
-            <h2 className="scene-title">WHAT STAGE ARE YOU?</h2>
-          </div>
-
-          <form onSubmit={revealCard} className="mt-8 grid gap-4 lg:grid-cols-[0.85fr,1.15fr]">
-            <div className="glass-card rounded-[2rem] p-5 sm:p-6">
-              <div className="grid gap-3">
-                {(Object.keys(stageCards) as Stage[]).map((stage) => (
-                  <label
-                    key={stage}
-                    className={`rounded-[1.3rem] border p-4 text-left transition ${
-                      selectedStage === stage
-                        ? "border-amber-200/55 bg-amber-200/14"
-                        : "border-white/20 bg-black/35 hover:border-white/30 hover:bg-white/8"
-                    }`}
-                  >
-                    <input
-                      type="radio"
-                      name="stage"
-                      value={stage}
-                      checked={selectedStage === stage}
-                      onChange={() => setSelectedStage(stage)}
-                      className="sr-only"
-                    />
-                    <div className="flex items-center gap-3">
-                      <span className="text-3xl">{stageCards[stage].icon}</span>
-                      <p className="text-xl font-semibold text-white/95">{stage}</p>
-                    </div>
-                  </label>
-                ))}
-              </div>
-
-              <button type="submit" className="action-pill mt-5 w-full bg-gradient-to-r from-amber-300 to-orange-400 text-black">
-                Generate Share Card
-              </button>
-            </div>
-
-            <div className="glass-card rounded-[2rem] p-5 sm:p-6">
-              {!resultCard ? (
-                <div className="screenshot-card flex min-h-[320px] items-center justify-center rounded-[1.5rem] border border-dashed border-white/20 bg-black/35 p-6 text-center">
-                  <p className="max-w-sm text-lg text-amber-50/92">Pick a stage. Generate the card. Screenshot it for X.</p>
-                </div>
-              ) : (
-                <div className="screenshot-card rounded-[1.75rem] border border-white/20 bg-[radial-gradient(circle_at_top,rgba(255,206,126,0.18),transparent_35%),linear-gradient(180deg,rgba(6,15,24,0.85),rgba(4,10,18,0.94))] p-6 sm:p-7">
-                  <p className="text-[10px] uppercase tracking-[0.24em] text-amber-100/88">BFLY Aura Card</p>
-                  <div className="mt-5 flex items-start justify-between gap-4">
-                    <div>
-                      <p className="text-6xl">{resultCard.icon}</p>
-                      <h3 className="mt-3 text-4xl text-white/95">{resultCard.title}</h3>
-                    </div>
-                    <div className="rounded-full border border-white/15 bg-white/5 px-3 py-2 text-[10px] uppercase tracking-[0.18em] text-amber-100/85">
-                      {resultCard.arc}
-                    </div>
-                  </div>
-
-                  <p className="mt-6 text-xl text-amber-50/94">{resultCard.line}</p>
-                  <p className="mt-3 text-sm uppercase tracking-[0.16em] text-amber-100/82">{resultCard.quote}</p>
-
-                  <div className="mt-8 flex flex-wrap gap-3">
-                    <button onClick={copyResultForX} type="button" className="action-pill border border-white/25 bg-white/8 text-amber-50">
-                      Copy For X
-                    </button>
-                    <button onClick={() => runSwarmAction(swarmActions[1])} type="button" className="action-pill border border-amber-200/30 bg-amber-200/12 text-amber-50">
-                      Grow Wings
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
-          </form>
-        </div>
-      </section>
-
-      <section id="migration-widget" className="story-panel scene-panel z-10 px-4 scroll-mt-20 md:scroll-mt-24 md:snap-start">
-        <div className="scene-shell mx-auto w-[min(980px,96vw)]">
-          <div className="glass-card rounded-[2rem] p-6 sm:p-8">
-            <p className="scene-kicker">🦋 Migration Season</p>
-            <h2 className="scene-title">Wings Growing...</h2>
-
-            <div className="mt-5 h-4 rounded-full border border-white/25 bg-black/50 p-1">
-              <motion.div
-                className="h-full rounded-full bg-gradient-to-r from-amber-300 via-orange-300 to-cyan-300"
-                animate={{ width: `${statusBar}%` }}
-                transition={{ duration: 0.9 }}
-              />
-            </div>
-
-            <p className="mt-4 text-base text-amber-50/94">{statusMessage}</p>
-            <p className="mt-2 text-sm uppercase tracking-[0.16em] text-amber-100/82">{randomMessages[statusIndex]}</p>
-          </div>
-        </div>
-      </section>
-
-      <section id="cocoon" className="story-panel scene-panel scene-panel--cocoon z-10 px-4 scroll-mt-20 md:scroll-mt-24 md:snap-start">
-        <div className="scene-shell glass-card cocoon-card mx-auto w-[min(1080px,96vw)] overflow-hidden rounded-[2rem] p-6 sm:p-10">
-          <div className="scene-heading max-w-2xl">
-            <p className="scene-kicker">THE COCOON</p>
-            <h2 className="scene-title">Everyone thought we disappeared.</h2>
-            <h3 className="mt-2 text-2xl text-amber-100/92 sm:text-4xl">We were transforming.</h3>
-          </div>
-
-          <div className="mt-8 grid gap-8 lg:grid-cols-[0.9fr,1.1fr] lg:items-center">
-            <div className="relative min-h-[320px] rounded-[1.75rem] border border-white/20 bg-black/45 p-4 sm:min-h-[380px]">
-              <div className="cocoon-shell" />
-              <motion.span className="crack-line crack-1" animate={shouldReduceEffects ? { scaleY: 0.7 } : { scaleY: [0.2, 1, 0.45] }} transition={shouldReduceEffects ? { duration: 0.2 } : { duration: 2.2, repeat: Infinity }} />
-              <motion.span className="crack-line crack-2" animate={shouldReduceEffects ? { scaleY: 0.75 } : { scaleY: [0.3, 1, 0.5] }} transition={shouldReduceEffects ? { duration: 0.2 } : { duration: 2.1, repeat: Infinity, delay: 0.25 }} />
-              <motion.span className="crack-line crack-3" animate={shouldReduceEffects ? { scaleY: 0.68 } : { scaleY: [0.25, 1, 0.4] }} transition={shouldReduceEffects ? { duration: 0.2 } : { duration: 2.4, repeat: Infinity, delay: 0.5 }} />
-            </div>
-
-            <div className="grid gap-4">
-              {["Particles rising.", "Shell cracking.", "Butterfly emerging."].map((line, idx) => (
-                <div key={line} className="glass-card rounded-[1.5rem] p-5" data-drift={12 + idx * 4}>
-                  <p className="text-lg text-amber-50/94 sm:text-xl">{line}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section id="swarm" className="story-panel scene-panel z-10 px-4 pb-28 scroll-mt-20 md:scroll-mt-24 md:snap-start">
-        <div className="scene-shell mx-auto w-[min(1100px,96vw)]">
-          <div className="scene-heading text-center">
-            <p className="scene-kicker">THE SWARM</p>
-            <h2 className="scene-title">Movement over noise.</h2>
-          </div>
-
-          <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <div className="glass-card scene-card p-6" data-drift="10">
-              <p className="text-[10px] uppercase tracking-[0.2em] text-amber-100/88">🦋 Wings Earned</p>
-              <p className="mt-3 text-4xl font-semibold text-white/96">{wingsEarned.toLocaleString()}</p>
-            </div>
-            <div className="glass-card scene-card p-6" data-drift="12">
-              <p className="text-[10px] uppercase tracking-[0.2em] text-amber-100/88">🌸 Flowers Planted</p>
-              <p className="mt-3 text-4xl font-semibold text-white/96">{flowersPlanted.toLocaleString()}</p>
-            </div>
-            <div className="glass-card scene-card p-6" data-drift="14">
-              <p className="text-[10px] uppercase tracking-[0.2em] text-amber-100/88">🌎 Territories Reached</p>
-              <p className="mt-3 text-4xl font-semibold text-white/96">{territoriesReached.toLocaleString()}</p>
-            </div>
-            <div className="glass-card scene-card p-6" data-drift="16">
-              <p className="text-[10px] uppercase tracking-[0.2em] text-amber-100/88">⚡ Transformations Completed</p>
-              <p className="mt-3 text-4xl font-semibold text-white/96">{transformationsCompleted.toLocaleString()}</p>
-            </div>
-          </div>
-
-          <div className="mt-7 grid gap-3 sm:grid-cols-3">
-            {swarmActions.map((action) => (
-              <button
-                key={action.label}
-                onClick={() => runSwarmAction(action)}
-                className="action-pill border border-white/28 bg-black/42 text-amber-50"
+      <section
+        id="spotted"
+        className="relative min-h-screen px-4 py-32 md:py-40"
+      >
+        <div className="mx-auto max-w-6xl">
+          {["Dogs bark.", "Cats meow.", "Frogs croak.", "Butterflies migrate."].map(
+            (line, index) => (
+              <motion.h2
+                key={line}
+                initial={{ opacity: 0, x: index % 2 === 0 ? -60 : 60 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true, amount: 0.5 }}
+                transition={{ duration: 0.7 }}
+                className="mb-6 text-5xl font-black uppercase leading-none tracking-tight md:text-8xl"
               >
-                {action.label}
+                {line}
+              </motion.h2>
+            )
+          )}
+        </div>
+      </section>
+
+      <section
+        id="stage"
+        className="relative min-h-screen px-4 py-32 md:py-40"
+      >
+        <div className="mx-auto max-w-6xl">
+          <p className="text-xs font-black uppercase tracking-[0.35em] text-amber-200">
+            Migration Test
+          </p>
+          <h2 className="mt-4 text-5xl font-black uppercase leading-none md:text-7xl">
+            What Stage
+            <br />
+            Are You?
+          </h2>
+
+          <div className="mt-12 grid gap-4 md:grid-cols-4">
+            {stages.map((stage) => (
+              <button
+                key={stage.title}
+                onClick={() => setSelected(stage)}
+                className="group rounded-[2rem] border border-white/15 bg-white/[0.08] p-6 text-left backdrop-blur transition hover:-translate-y-1 hover:border-amber-300/60 hover:bg-amber-300/10"
+              >
+                <div className="text-5xl">{stage.icon}</div>
+                <h3 className="mt-5 text-2xl font-black">{stage.title}</h3>
+                <p className="mt-3 text-sm font-medium leading-relaxed text-white/80">
+                  {stage.line}
+                </p>
               </button>
             ))}
+          </div>
+
+          <AnimatePresence>
+            {selected && (
+              <motion.div
+                initial={{ opacity: 0, y: 24, scale: 0.96 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 24, scale: 0.96 }}
+                className="mt-10 rounded-[2rem] border border-amber-300/30 bg-black/60 p-7 shadow-[0_0_60px_rgba(251,191,36,0.16)] backdrop-blur-xl"
+              >
+                <p className="text-6xl">{selected.icon}</p>
+                <h3 className="mt-4 text-4xl font-black uppercase">
+                  {selected.title}
+                </h3>
+                <p className="mt-3 text-xl text-amber-100">
+                  {selected.quote}
+                </p>
+                <p className="mt-5 text-white/80">
+                  Screenshot this. Post it. Let them know your wings are
+                  loading.
+                </p>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </section>
+
+      <section
+        id="cocoon"
+        className="relative flex min-h-screen items-center px-4 py-32 md:py-40"
+      >
+        <div className="mx-auto grid max-w-6xl items-center gap-12 md:grid-cols-2">
+          <div>
+            <p className="text-xs font-black uppercase tracking-[0.35em] text-amber-200">
+              The Cocoon
+            </p>
+            <h2 className="mt-4 text-5xl font-black uppercase leading-none md:text-7xl">
+              They Thought
+              <br />
+              We Vanished.
+            </h2>
+            <p className="mt-6 text-xl font-medium text-white/85">
+              We were not dead. We were not quiet. We were transforming.
+            </p>
+          </div>
+
+          <motion.div
+            initial={{ opacity: 0, scale: 0.85 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true, amount: 0.4 }}
+            className="relative mx-auto flex h-80 w-64 items-center justify-center rounded-full bg-gradient-to-b from-amber-200/30 to-orange-900/20 shadow-[0_0_100px_rgba(251,191,36,0.25)]"
+          >
+            <div className="absolute h-64 w-36 rounded-full border border-amber-100/30 bg-gradient-to-b from-amber-100/35 to-black/50" />
+            <motion.div
+              animate={{ opacity: [0.2, 1, 0.2] }}
+              transition={{ duration: 1.5, repeat: Infinity }}
+              className="absolute h-56 w-1 rotate-12 bg-amber-100/80"
+            />
+            <motion.div
+              animate={{ scale: [0.7, 1.2, 0.7], opacity: [0, 1, 0] }}
+              transition={{ duration: 2, repeat: Infinity }}
+              className="text-7xl"
+            >
+              🦋
+            </motion.div>
+          </motion.div>
+        </div>
+      </section>
+
+      <section
+        id="swarm"
+        className="relative min-h-screen px-4 py-32 text-center md:py-40"
+      >
+        <div className="mx-auto max-w-5xl">
+          <p className="text-7xl">🐛 → 🦋</p>
+          <h2 className="mt-8 text-5xl font-black uppercase leading-none md:text-8xl">
+            You Don&apos;t Buy BFLY.
+            <br />
+            You Become It.
+          </h2>
+
+          <div className="mt-12 grid gap-4 md:grid-cols-4">
+            {[
+              ["🦋", "Wings Earned"],
+              ["🌸", "Flowers Planted"],
+              ["🌎", "Territories Reached"],
+              ["⚡", "Transformations"],
+            ].map(([icon, label]) => (
+              <div
+                key={label}
+                className="rounded-[2rem] border border-white/15 bg-white/[0.08] p-6 backdrop-blur"
+              >
+                <div className="text-4xl">{icon}</div>
+                <p className="mt-4 text-sm font-black uppercase tracking-widest text-white/80">
+                  {label}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-12 flex flex-col justify-center gap-3 sm:flex-row">
+            <a
+              href="https://x.com"
+              className="rounded-full bg-amber-300 px-8 py-4 text-sm font-black uppercase tracking-widest text-black"
+            >
+              Join X
+            </a>
+            <button className="rounded-full border border-white/25 bg-white/10 px-8 py-4 text-sm font-black uppercase tracking-widest text-white backdrop-blur">
+              Plant Your Flower
+            </button>
           </div>
         </div>
       </section>
     </main>
+  );
+}
+
+function MigrationToast({ text }: { text: string }) {
+  return (
+    <div className="fixed bottom-5 left-1/2 z-50 w-[calc(100%-2rem)] max-w-sm -translate-x-1/2 rounded-full border border-white/15 bg-black/70 px-5 py-3 text-center text-sm font-bold text-amber-100 shadow-2xl backdrop-blur-xl md:bottom-auto md:left-auto md:right-5 md:top-24 md:translate-x-0">
+      🦋 {text}
+    </div>
   );
 }
